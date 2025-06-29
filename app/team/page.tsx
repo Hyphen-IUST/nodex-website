@@ -23,7 +23,7 @@ interface TeamMember {
   id: string;
   name: string;
   photo?: string;
-  category: "exec" | "direc" | "faculty";
+  category: "exec" | "direc" | "faculty" | "leads";
   title: string;
   qualification?: string;
   description?: string;
@@ -38,6 +38,7 @@ interface TeamData {
   exec: TeamMember[];
   direc: TeamMember[];
   faculty: TeamMember[];
+  leads: TeamMember[];
 }
 
 export default function TeamPage() {
@@ -72,6 +73,8 @@ export default function TeamPage() {
         return "Board of Students";
       case "faculty":
         return "Board of Faculty";
+      case "leads":
+        return "Team Leads";
       default:
         return "";
     }
@@ -85,6 +88,8 @@ export default function TeamPage() {
         return "Student representatives managing specific departments, activities, and fostering community engagement";
       case "faculty":
         return "Faculty members providing guidance, academic oversight, and mentorship to the organization";
+      case "leads":
+        return "Team Leads oversee key initiatives, projects, and support the growth of their respective domains.";
       default:
         return "";
     }
@@ -98,6 +103,8 @@ export default function TeamPage() {
         return <Award className="w-6 h-6" />;
       case "faculty":
         return <GraduationCap className="w-6 h-6" />;
+      case "leads":
+        return <Users className="w-6 h-6 text-yellow-500" />;
       default:
         return null;
     }
@@ -293,6 +300,9 @@ export default function TeamPage() {
             <>
               {/* Board of Students */}
               <TeamSection category="direc" members={teamData.direc} />
+
+              {/* Team Leads */}
+              <TeamSection category="leads" members={teamData.leads} />
 
               {/* Board of Faculty */}
               <TeamSection category="faculty" members={teamData.faculty} />

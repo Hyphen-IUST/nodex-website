@@ -60,6 +60,9 @@ export async function GET() {
       exec: teamMembers.filter(
         (member: TeamMember) => member.category === "exec"
       ),
+      leads: teamMembers.filter(
+        (member: TeamMember) => member.category === "leads"
+      ),
     };
 
     return NextResponse.json(

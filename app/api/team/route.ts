@@ -28,7 +28,7 @@ export async function GET() {
 
     // Fetch team members from PocketBase
     const response = await fetch(
-      `${pocketbaseUrl}/api/collections/nodex_team/records?sort=category,name`,
+      `${pocketbaseUrl}/api/collections/nodex_team/records?sort=category,pos`,
       {
         method: "GET",
         headers: {

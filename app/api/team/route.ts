@@ -4,7 +4,7 @@ interface TeamMember {
   id: string;
   name: string;
   photo?: string;
-  category: "exec" | "direc" | "faculty" | "leads";
+  category: "exec" | "direc" | "faculty" | "lead";
   title: string;
   qualification?: string;
   description?: string;
@@ -61,7 +61,7 @@ export async function GET() {
         (member: TeamMember) => member.category === "exec"
       ),
       leads: teamMembers.filter(
-        (member: TeamMember) => member.category === "leads"
+        (member: TeamMember) => member.category === "lead"
       ),
     };
 

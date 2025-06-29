@@ -12,17 +12,10 @@ import {
   Mail,
   Award,
   Users,
-  Code,
   GraduationCap,
   Phone,
 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -30,13 +23,13 @@ interface TeamMember {
   id: string;
   name: string;
   photo?: string;
-  category: "exec" | "direc" | "lead" | "faculty";
+  category: "exec" | "direc" | "faculty";
   title: string;
   qualification?: string;
   description?: string;
   skills?: string;
   email?: string;
-  phone?: string;
+  phone?: number;
   github?: string;
   linkedin?: string;
 }
@@ -44,7 +37,6 @@ interface TeamMember {
 interface TeamData {
   exec: TeamMember[];
   direc: TeamMember[];
-  lead: TeamMember[];
   faculty: TeamMember[];
 }
 
@@ -77,11 +69,9 @@ export default function TeamPage() {
       case "exec":
         return "Executive Board";
       case "direc":
-        return "Board of Directors";
-      case "lead":
-        return "Team Leads";
+        return "Board of Students";
       case "faculty":
-        return "Faculty Board";
+        return "Board of Faculty";
       default:
         return "";
     }
@@ -90,13 +80,11 @@ export default function TeamPage() {
   const getCategoryDescription = (category: string) => {
     switch (category) {
       case "exec":
-        return "The core leadership team responsible for strategic direction and overall management";
+        return "The core leadership team responsible for strategic direction and overall management of NodeX";
       case "direc":
-        return "Directors overseeing specific functional areas and department operations";
-      case "lead":
-        return "Team leads managing specialized tracks and student activities";
+        return "Student representatives managing specific departments, activities, and fostering community engagement";
       case "faculty":
-        return "Faculty members providing guidance, support, and academic oversight";
+        return "Faculty members providing guidance, academic oversight, and mentorship to the organization";
       default:
         return "";
     }
@@ -108,8 +96,6 @@ export default function TeamPage() {
         return <Users className="w-6 h-6" />;
       case "direc":
         return <Award className="w-6 h-6" />;
-      case "lead":
-        return <Code className="w-6 h-6" />;
       case "faculty":
         return <GraduationCap className="w-6 h-6" />;
       default:
@@ -118,55 +104,64 @@ export default function TeamPage() {
   };
 
   const TeamMemberCard = ({ member }: { member: TeamMember }) => (
-    <Card className="border-border hover:shadow-lg transition-shadow">
-      <CardHeader className="text-center">
-        <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
-          {member.photo ? (
-            <Image
-              src={member.photo}
-              alt={member.name}
-              width={96}
-              height={96}
-              className="w-full h-full object-cover rounded-full"
-            />
-          ) : (
-            member.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-          )}
+    <Card className="border-border hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-muted/20">
+      <CardHeader className="text-center pb-4">
+        <div className="relative w-28 h-28 mx-auto mb-6">
+          <div className="w-28 h-28 bg-gradient-to-br from-primary/20 to-primary/40 rounded-2xl flex items-center justify-center text-primary text-3xl font-bold overflow-hidden border-4 border-background shadow-lg">
+            {member.photo ? (
+              <Image
+                src={member.photo}
+                alt={member.name}
+                width={112}
+                height={112}
+                className="w-full h-full object-cover rounded-xl"
+              />
+            ) : (
+              member.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+            )}
+          </div>
         </div>
-        <CardTitle className="text-xl">{member.name}</CardTitle>
-        <CardDescription>
-          <Badge variant="default" className="mb-2">
+        <CardTitle className="text-xl font-bold mb-2">{member.name}</CardTitle>
+        <div className="flex justify-center mb-3">
+          <Badge variant="default" className="px-3 py-1 font-medium">
             {member.title}
           </Badge>
-          {member.qualification && (
-            <div className="text-sm text-muted-foreground mt-2">
-              <RichTextRenderer
-                content={member.qualification}
-                className="text-xs"
-              />
-            </div>
-          )}
-        </CardDescription>
+        </div>
+        {member.qualification && (
+          <div className="text-sm text-muted-foreground border-t border-border/50 pt-3 mt-2">
+            <RichTextRenderer
+              content={member.qualification}
+              className="text-xs leading-relaxed"
+            />
+          </div>
+        )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-2">
         {member.description && (
-          <div className="mb-4">
+          <div className="mb-6 p-3 bg-muted/30 rounded-lg border border-border/30">
             <RichTextRenderer
               content={member.description}
-              className="text-sm text-muted-foreground"
+              className="text-sm text-muted-foreground leading-relaxed"
             />
           </div>
         )}
 
         {member.skills && (
-          <div className="mb-4">
-            <h4 className="font-semibold text-sm mb-2">Skills:</h4>
-            <div className="flex flex-wrap gap-1">
+          <div className="mb-6">
+            <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+              <div className="w-1 h-4 bg-primary rounded-full"></div>
+              Expertise
+            </h4>
+            <div className="flex flex-wrap gap-2">
               {member.skills.split(",").map((skill, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="text-xs py-1 px-2 font-medium"
+                >
                   {skill.trim()}
                 </Badge>
               ))}
@@ -174,7 +169,7 @@ export default function TeamPage() {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2 justify-center">
+        <div className="flex flex-wrap gap-2 justify-center pt-4 border-t border-border/30">
           {member.email && (
             <Button variant="outline" size="sm" asChild>
               <a href={`mailto:${member.email}`}>
@@ -183,7 +178,7 @@ export default function TeamPage() {
               </a>
             </Button>
           )}
-          {member.phone && (
+          {member.phone != 0 && (
             <Button variant="outline" size="sm" asChild>
               <a href={`tel:${member.phone}`}>
                 <Phone className="w-4 h-4 mr-1" />
@@ -296,17 +291,14 @@ export default function TeamPage() {
 
           {teamData && (
             <>
-              {/* Executive Board */}
-              <TeamSection category="exec" members={teamData.exec} />
-
-              {/* Board of Directors */}
+              {/* Board of Students */}
               <TeamSection category="direc" members={teamData.direc} />
 
-              {/* Team Leads */}
-              <TeamSection category="lead" members={teamData.lead} />
-
-              {/* Faculty Board */}
+              {/* Board of Faculty */}
               <TeamSection category="faculty" members={teamData.faculty} />
+
+              {/* Executive Board */}
+              <TeamSection category="exec" members={teamData.exec} />
             </>
           )}
         </div>

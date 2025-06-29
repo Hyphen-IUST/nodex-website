@@ -4,7 +4,7 @@ interface TeamMember {
   id: string;
   name: string;
   photo?: string;
-  category: "exec" | "direc" | "faculty";
+  category: "exec" | "direc" | "faculty" | "leads";
   title: string;
   qualification?: string;
   description?: string;

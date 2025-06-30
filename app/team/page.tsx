@@ -6,6 +6,7 @@ import { Header } from "../../components/global/header";
 import { Footer } from "../../components/global/footer";
 import { RichTextRenderer } from "@/components/ui/rich-text-renderer";
 import { PageLoading } from "@/components/ui/page-loading";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 import {
   Github,
   Linkedin,
@@ -45,6 +46,10 @@ export default function TeamPage() {
   const [teamData, setTeamData] = useState<TeamData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { logActivity } = useActivityLogger({
+    trackPageViews: true,
+    trackClicks: true,
+  });
 
   useEffect(() => {
     fetchTeamData();
@@ -110,7 +115,13 @@ export default function TeamPage() {
     }
   };
 
-  const TeamMemberCard = ({ member }: { member: TeamMember }) => {
+  const TeamMemberCard = ({
+    member,
+    onActivity,
+  }: {
+    member: TeamMember;
+    onActivity: (action: string, data?: Record<string, unknown>) => void;
+  }) => {
     const [qualificationExpanded, setQualificationExpanded] = useState(false);
     const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
@@ -173,9 +184,14 @@ export default function TeamPage() {
               />
               {showViewMoreButton(member.qualification) && (
                 <button
-                  onClick={() =>
-                    setQualificationExpanded(!qualificationExpanded)
-                  }
+                  onClick={() => {
+                    setQualificationExpanded(!qualificationExpanded);
+                    onActivity("team_member_qualification_toggle", {
+                      member_name: member.name,
+                      member_id: member.id,
+                      expanded: !qualificationExpanded,
+                    });
+                  }}
                   className="text-primary hover:text-primary/80 text-xs font-medium mt-1 block"
                 >
                   {qualificationExpanded ? "View Less" : "View More"}
@@ -196,7 +212,14 @@ export default function TeamPage() {
               />
               {showViewMoreButton(member.description) && (
                 <button
-                  onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                  onClick={() => {
+                    setDescriptionExpanded(!descriptionExpanded);
+                    onActivity("team_member_description_toggle", {
+                      member_name: member.name,
+                      member_id: member.id,
+                      expanded: !descriptionExpanded,
+                    });
+                  }}
                   className="text-primary hover:text-primary/80 text-xs font-medium mt-1 block"
                 >
                   {descriptionExpanded ? "View Less" : "View More"}
@@ -313,9 +336,11 @@ export default function TeamPage() {
   const TeamSection = ({
     category,
     members,
+    onActivity,
   }: {
     category: keyof TeamData;
     members: TeamMember[];
+    onActivity: (action: string, data?: Record<string, unknown>) => void;
   }) => (
     <section className="mb-16">
       <div className="text-center mb-12">
@@ -337,7 +362,11 @@ export default function TeamPage() {
       ) : (
         <div className={`grid gap-4 ${getGridColumns(members.length)}`}>
           {members.map((member) => (
-            <TeamMemberCard key={member.id} member={member} />
+            <TeamMemberCard
+              key={member.id}
+              member={member}
+              onActivity={onActivity}
+            />
           ))}
         </div>
       )}
@@ -383,16 +412,32 @@ export default function TeamPage() {
           {teamData && (
             <>
               {/* Board of Students */}
-              <TeamSection category="direc" members={teamData.direc} />
+              <TeamSection
+                category="direc"
+                members={teamData.direc}
+                onActivity={logActivity}
+              />
 
-              {/* Team Leads */}
-              <TeamSection category="leads" members={teamData.leads} />
+              {/* Operations Team */}
+              <TeamSection
+                category="leads"
+                members={teamData.leads}
+                onActivity={logActivity}
+              />
 
               {/* Board of Faculty */}
-              <TeamSection category="faculty" members={teamData.faculty} />
+              <TeamSection
+                category="faculty"
+                members={teamData.faculty}
+                onActivity={logActivity}
+              />
 
               {/* Executive Board */}
-              <TeamSection category="exec" members={teamData.exec} />
+              <TeamSection
+                category="exec"
+                members={teamData.exec}
+                onActivity={logActivity}
+              />
             </>
           )}
         </div>

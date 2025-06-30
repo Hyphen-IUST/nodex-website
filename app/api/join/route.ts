@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { logActivity } from "@/lib/activity-logger";
 
 // Define the schema for form validation
 const joinFormSchema = z.object({
@@ -111,6 +112,21 @@ export async function POST(request: NextRequest) {
     console.log(
       "Application successfully submitted to PocketBase:",
       pocketbaseData
+    );
+
+    // Log the activity
+    await logActivity(
+      {
+        action: "join_form_submission",
+        page_url: "/join",
+        additional_data: {
+          applicationId: pocketbaseData.id,
+          ipAddress: ipAddress,
+          submittedAt: new Date().toISOString(),
+          status: "success",
+        },
+      },
+      request
     );
 
     // Return success response

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -77,6 +78,10 @@ export function JoinForm() {
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+  const { logActivity } = useActivityLogger({
+    trackPageViews: true,
+    trackFormSubmissions: true,
+  });
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormData>({
@@ -135,10 +140,16 @@ export function JoinForm() {
           type: "success",
           message: data.message || "Application submitted successfully!",
         });
+        await logActivity("join_form_success", {
+          applicationId: data.applicationId,
+        });
         form.reset();
         recaptchaRef.current?.reset();
       } else if (response.status === 303 && data.redirect) {
         // Handle redirect response (for blocked IPs)
+        await logActivity("join_form_blocked", {
+          reason: "blocked_ip",
+        });
         window.location.href = data.redirect;
         return;
       } else {
@@ -147,6 +158,10 @@ export function JoinForm() {
           message:
             data.message || "Failed to submit application. Please try again.",
         });
+        await logActivity("join_form_error", {
+          error_type: "validation_or_server_error",
+          status_code: response.status,
+        });
         recaptchaRef.current?.reset();
       }
     } catch (err) {
@@ -154,6 +169,10 @@ export function JoinForm() {
       setSubmitStatus({
         type: "error",
         message: "Network error. Please check your connection and try again.",
+      });
+      await logActivity("join_form_error", {
+        error_type: "network_error",
+        error: err instanceof Error ? err.message : "unknown_error",
       });
       recaptchaRef.current?.reset();
     } finally {

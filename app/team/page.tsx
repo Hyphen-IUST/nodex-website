@@ -110,160 +110,204 @@ export default function TeamPage() {
     }
   };
 
-  const TeamMemberCard = ({ member }: { member: TeamMember }) => (
-    <Card className="border-border hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-background to-muted/20 h-fit">
-      <CardHeader className="text-center pb-3 p-4">
-        <div className="relative w-16 h-16 mx-auto mb-3">
-          <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/40 rounded-xl flex items-center justify-center text-primary text-lg font-bold overflow-hidden border-2 border-background shadow-md">
-            {member.photo ? (
-              <Image
-                src={member.photo}
-                alt={member.name}
-                width={64}
-                height={64}
-                className="w-full h-full object-cover rounded-lg"
-              />
-            ) : (
-              member.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-            )}
-          </div>
-        </div>
-        <CardTitle className="text-sm font-bold mb-2 leading-tight">
-          {member.name}
-        </CardTitle>
-        <div className="flex justify-center mb-2">
-          <Badge variant="default" className="px-2 py-0.5 text-xs font-medium">
-            {member.title}
-          </Badge>
-        </div>
-        {member.qualification && (
-          <div className="text-xs text-muted-foreground border-t border-border/50 pt-2 mt-2">
-            <RichTextRenderer
-              content={member.qualification}
-              className="text-xs leading-relaxed"
-            />
-          </div>
-        )}
-      </CardHeader>
-      <CardContent className="pt-0 p-4">
-        {member.description && (
-          <div className="mb-3 p-2 bg-muted/30 rounded-md border border-border/30">
-            <RichTextRenderer
-              content={member.description}
-              className="text-xs text-muted-foreground leading-relaxed"
-            />
-          </div>
-        )}
+  const TeamMemberCard = ({ member }: { member: TeamMember }) => {
+    const [qualificationExpanded, setQualificationExpanded] = useState(false);
+    const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
-        {member.skills && (
-          <div className="mb-3">
-            <h4 className="font-semibold text-xs mb-2 flex items-center gap-1">
-              <div className="w-0.5 h-3 bg-primary rounded-full"></div>
-              Skills
-            </h4>
-            <div className="flex flex-wrap gap-1">
-              {member.skills
-                .split(",")
-                .slice(0, 4)
-                .map((skill, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="text-xs py-0.5 px-1.5 font-medium"
-                  >
-                    {skill.trim()}
-                  </Badge>
-                ))}
-              {member.skills.split(",").length > 4 && (
-                <Badge
-                  variant="secondary"
-                  className="text-xs py-0.5 px-1.5 font-medium"
-                >
-                  +{member.skills.split(",").length - 4}
-                </Badge>
+    // Simple logic: only truncate if text is very long AND not expanded
+    const shouldTruncate = (text: string, isExpanded: boolean) => {
+      return text.length > 500 && !isExpanded;
+    };
+
+    const getDisplayText = (text: string, isExpanded: boolean) => {
+      if (shouldTruncate(text, isExpanded)) {
+        return text.substring(0, 300) + "...";
+      }
+      return text;
+    };
+
+    const showViewMoreButton = (text: string) => {
+      return text.length > 500;
+    };
+
+    return (
+      <Card className="border-border hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-background to-muted/20 flex flex-col h-full">
+        <CardHeader className="text-center pb-3 p-4">
+          <div className="relative w-16 h-16 mx-auto mb-3">
+            <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/40 rounded-xl flex items-center justify-center text-primary text-lg font-bold overflow-hidden border-2 border-background shadow-md">
+              {member.photo ? (
+                <Image
+                  src={member.photo}
+                  alt={member.name}
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              ) : (
+                member.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
               )}
             </div>
           </div>
-        )}
+          <CardTitle className="text-sm font-bold mb-2 leading-tight">
+            {member.name}
+          </CardTitle>
+          <div className="flex justify-center mb-2">
+            <Badge
+              variant="default"
+              className="px-2 py-0.5 text-xs font-medium"
+            >
+              {member.title}
+            </Badge>
+          </div>
+          {member.qualification && (
+            <div className="text-xs text-muted-foreground border-t border-border/50 pt-2 mt-2">
+              <RichTextRenderer
+                content={getDisplayText(
+                  member.qualification,
+                  qualificationExpanded
+                )}
+                className="text-xs leading-relaxed"
+              />
+              {showViewMoreButton(member.qualification) && (
+                <button
+                  onClick={() =>
+                    setQualificationExpanded(!qualificationExpanded)
+                  }
+                  className="text-primary hover:text-primary/80 text-xs font-medium mt-1 block"
+                >
+                  {qualificationExpanded ? "View Less" : "View More"}
+                </button>
+              )}
+            </div>
+          )}
+        </CardHeader>
+        <CardContent className="pt-0 p-4 flex-1 flex flex-col">
+          {member.description && (
+            <div className="mb-3 p-2 bg-muted/30 rounded-md border border-border/30">
+              <RichTextRenderer
+                content={getDisplayText(
+                  member.description,
+                  descriptionExpanded
+                )}
+                className="text-xs text-muted-foreground leading-relaxed"
+              />
+              {showViewMoreButton(member.description) && (
+                <button
+                  onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                  className="text-primary hover:text-primary/80 text-xs font-medium mt-1 block"
+                >
+                  {descriptionExpanded ? "View Less" : "View More"}
+                </button>
+              )}
+            </div>
+          )}
 
-        <div className="flex flex-wrap gap-1 justify-center pt-2 border-t border-border/30">
-          {member.email && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              asChild
-            >
-              <a href={`mailto:${member.email}`}>
-                <Mail className="w-3 h-3 mr-1" />
-                Email
-              </a>
-            </Button>
+          {member.skills && (
+            <div className="mb-3">
+              <h4 className="font-semibold text-xs mb-2 flex items-center gap-1">
+                <div className="w-0.5 h-3 bg-primary rounded-full"></div>
+                Skills
+              </h4>
+              <div className="flex flex-wrap gap-1">
+                {member.skills
+                  .split(",")
+                  .slice(0, 4)
+                  .map((skill, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="text-xs py-0.5 px-1.5 font-medium"
+                    >
+                      {skill.trim()}
+                    </Badge>
+                  ))}
+                {member.skills.split(",").length > 4 && (
+                  <Badge
+                    variant="secondary"
+                    className="text-xs py-0.5 px-1.5 font-medium"
+                  >
+                    +{member.skills.split(",").length - 4}
+                  </Badge>
+                )}
+              </div>
+            </div>
           )}
-          {member.phone != 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              asChild
-            >
-              <a href={`tel:${member.phone}`}>
-                <Phone className="w-3 h-3 mr-1" />
-                Call
-              </a>
-            </Button>
-          )}
-          {member.github && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              asChild
-            >
-              <a href={member.github} target="_blank" rel="noopener noreferrer">
-                <Github className="w-3 h-3" />
-              </a>
-            </Button>
-          )}
-          {member.linkedin && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              asChild
-            >
-              <a
-                href={member.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
+
+          <div className="flex flex-wrap gap-1 justify-center pt-2 border-t border-border/30 mt-auto">
+            {member.email && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                asChild
               >
-                <Linkedin className="w-3 h-3" />
-              </a>
-            </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
+                <a href={`mailto:${member.email}`}>
+                  <Mail className="w-3 h-3 mr-1" />
+                  Email
+                </a>
+              </Button>
+            )}
+            {member.phone != 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                asChild
+              >
+                <a href={`tel:${member.phone}`}>
+                  <Phone className="w-3 h-3 mr-1" />
+                  Call
+                </a>
+              </Button>
+            )}
+            {member.github && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                asChild
+              >
+                <a
+                  href={member.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="w-3 h-3" />
+                </a>
+              </Button>
+            )}
+            {member.linkedin && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                asChild
+              >
+                <a
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin className="w-3 h-3" />
+                </a>
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
-  const getGridColumns = (memberCount: number, category: string) => {
-    // For Board of Students (direc), use 6 columns to handle up to 18 members
-    if (category === "direc") {
-      if (memberCount <= 6) return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6";
-      if (memberCount <= 12) return "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6";
-      return "grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6";
-    }
-
-    // For other categories, use more conservative layouts
-    if (memberCount >= 6) return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4";
-    if (memberCount >= 4) return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4";
-    if (memberCount >= 3) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+  const getGridColumns = (memberCount: number) => {
+    // Use 3 columns on large screens for much wider cards, center grid
+    if (memberCount >= 3)
+      return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 justify-center";
     if (memberCount === 2)
-      return "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto";
-    return "grid-cols-1 max-w-sm mx-auto";
+      return "grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto justify-center";
+    return "grid-cols-1 max-w-lg mx-auto justify-center";
   };
 
   const TeamSection = ({
@@ -291,9 +335,7 @@ export default function TeamPage() {
           </p>
         </div>
       ) : (
-        <div
-          className={`grid gap-4 ${getGridColumns(members.length, category)}`}
-        >
+        <div className={`grid gap-4 ${getGridColumns(members.length)}`}>
           {members.map((member) => (
             <TeamMemberCard key={member.id} member={member} />
           ))}

@@ -74,7 +74,7 @@ export default function TeamPage() {
       case "faculty":
         return "Board of Faculty";
       case "leads":
-        return "Team Leads";
+        return "Operations Team";
       default:
         return "";
     }
@@ -89,7 +89,7 @@ export default function TeamPage() {
       case "faculty":
         return "Faculty members providing guidance, academic oversight, and mentorship to the organization";
       case "leads":
-        return "Team Leads oversee key initiatives, projects, and support the growth of their respective domains.";
+        return "Operations specialists overseeing key areas like outreach, management, events, and day-to-day organizational activities";
       default:
         return "";
     }

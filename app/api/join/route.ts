@@ -22,15 +22,69 @@ const joinFormSchema = z.object({
   experience: z.string().optional(),
   projects: z.string().optional(),
   otherRemarks: z.string().optional(),
+  recaptchaToken: z.string().min(1, "reCAPTCHA verification is required"),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
     const validatedData = joinFormSchema.parse(body);
 
+    // Extract IP address from headers
+    const ipAddress =
+      request.headers.get("x-forwarded-for")?.split(",")[0] ||
+      request.headers.get("x-real-ip") ||
+      "0.0.0.0";
+
+    // Verify reCAPTCHA token
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    const recaptchaResponse = await fetch(
+      "https://www.google.com/recaptcha/api/siteverify",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `secret=${recaptchaSecret}&response=${validatedData.recaptchaToken}`,
+      }
+    );
+
+    const recaptchaData = await recaptchaResponse.json();
+    if (!recaptchaData.success) {
+      return NextResponse.json(
+        {
+          message: "reCAPTCHA verification failed. Please try again.",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Check if IP is blocked
     const pocketbaseUrl = process.env.POCKETBASE_URL;
+    const ipCheckResponse = await fetch(
+      `${pocketbaseUrl}/api/collections/blocked_ips/records?filter=(ip='${ipAddress}')`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const ipCheckData = await ipCheckResponse.json();
+
+    // If IP is blocked, redirect to rickroll, this is for you unemployed bitchless assholes.
+    if (ipCheckData.items && ipCheckData.items.length > 0) {
+      return NextResponse.json(
+        {
+          message: "Redirecting",
+          redirect: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        },
+        { status: 303 }
+      );
+    }
+
+    // Continue with application submission
     const pocketbaseResponse = await fetch(
       `${pocketbaseUrl}/api/collections/nodex_apps/records`,
       {
@@ -40,6 +94,7 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           ...validatedData,
+          ipAddress: ipAddress,
           interestedTracks: validatedData.interestedTracks.join(", "),
           submittedAt: new Date().toISOString(),
         }),

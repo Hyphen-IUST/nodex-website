@@ -17,6 +17,7 @@
 - **🔐 Authentication System** - Secure recruiter authentication with PocketBase
 - **🎯 Application Management** - Complete recruitment workflow system
 - **♿ Accessibility Focused** - WCAG compliant design patterns
+- **🛡️ Security Features** - reCAPTCHA integration and IP blocking
 
 ## 🛠️ Tech Stack
 
@@ -97,6 +98,17 @@ bun install
 ### 3. Environment Setup
 
 Create a `.env.local` file in the root directory:
+
+```bash
+# PocketBase Configuration
+POCKETBASE_URL=http://127.0.0.1:8090
+
+# reCAPTCHA Configuration
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
+RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+```
+
+> Note: Get your reCAPTCHA keys from [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin)
 
 ```env
 # PocketBase Configuration

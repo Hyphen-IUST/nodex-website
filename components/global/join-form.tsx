@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -53,6 +54,7 @@ const formSchema = z.object({
   experience: z.string().optional(),
   projects: z.string().optional(),
   otherRemarks: z.string().optional(),
+  recaptchaToken: z.string().min(1, "reCAPTCHA verification is required"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -76,6 +78,7 @@ export function JoinForm() {
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -92,6 +95,7 @@ export function JoinForm() {
       experience: "",
       projects: "",
       otherRemarks: "",
+      recaptchaToken: "",
     },
   });
 
@@ -100,12 +104,29 @@ export function JoinForm() {
     setSubmitStatus({ type: null, message: "" });
 
     try {
+      // Get reCAPTCHA token
+      const token = recaptchaRef.current?.getValue();
+      if (!token) {
+        setSubmitStatus({
+          type: "error",
+          message: "Please complete the reCAPTCHA verification.",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Include token in submission
+      const submissionData = {
+        ...values,
+        recaptchaToken: token,
+      };
+
       const response = await fetch("/api/join", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(submissionData),
       });
 
       const data = await response.json();
@@ -116,12 +137,18 @@ export function JoinForm() {
           message: data.message || "Application submitted successfully!",
         });
         form.reset();
+        recaptchaRef.current?.reset();
+      } else if (response.status === 303 && data.redirect) {
+        // Handle redirect response (for blocked IPs)
+        window.location.href = data.redirect;
+        return;
       } else {
         setSubmitStatus({
           type: "error",
           message:
             data.message || "Failed to submit application. Please try again.",
         });
+        recaptchaRef.current?.reset();
       }
     } catch (err) {
       console.error("Form submission error:", err);
@@ -129,6 +156,7 @@ export function JoinForm() {
         type: "error",
         message: "Network error. Please check your connection and try again.",
       });
+      recaptchaRef.current?.reset();
     } finally {
       setIsSubmitting(false);
     }
@@ -446,6 +474,27 @@ export function JoinForm() {
                   </FormItem>
                 )}
               />
+            </div>
+
+            <div className="mb-4">
+              <FormLabel className="block mb-2">
+                reCAPTCHA Verification *
+              </FormLabel>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={
+                  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
+                  "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                } // Default is Google's test key
+                onChange={(token) => {
+                  form.setValue("recaptchaToken", token || "");
+                }}
+              />
+              {form.formState.errors.recaptchaToken && (
+                <p className="text-sm text-red-500 mt-1">
+                  {form.formState.errors.recaptchaToken.message}
+                </p>
+              )}
             </div>
 
             <Button type="submit" disabled={isSubmitting} className="w-full">

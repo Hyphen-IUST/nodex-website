@@ -111,17 +111,17 @@ export default function TeamPage() {
   };
 
   const TeamMemberCard = ({ member }: { member: TeamMember }) => (
-    <Card className="border-border hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-muted/20">
-      <CardHeader className="text-center pb-4">
-        <div className="relative w-28 h-28 mx-auto mb-6">
-          <div className="w-28 h-28 bg-gradient-to-br from-primary/20 to-primary/40 rounded-2xl flex items-center justify-center text-primary text-3xl font-bold overflow-hidden border-4 border-background shadow-lg">
+    <Card className="border-border hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-background to-muted/20 h-fit">
+      <CardHeader className="text-center pb-3 p-4">
+        <div className="relative w-16 h-16 mx-auto mb-3">
+          <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/40 rounded-xl flex items-center justify-center text-primary text-lg font-bold overflow-hidden border-2 border-background shadow-md">
             {member.photo ? (
               <Image
                 src={member.photo}
                 alt={member.name}
-                width={112}
-                height={112}
-                className="w-full h-full object-cover rounded-xl"
+                width={64}
+                height={64}
+                className="w-full h-full object-cover rounded-lg"
               />
             ) : (
               member.name
@@ -131,14 +131,16 @@ export default function TeamPage() {
             )}
           </div>
         </div>
-        <CardTitle className="text-xl font-bold mb-2">{member.name}</CardTitle>
-        <div className="flex justify-center mb-3">
-          <Badge variant="default" className="px-3 py-1 font-medium">
+        <CardTitle className="text-sm font-bold mb-2 leading-tight">
+          {member.name}
+        </CardTitle>
+        <div className="flex justify-center mb-2">
+          <Badge variant="default" className="px-2 py-0.5 text-xs font-medium">
             {member.title}
           </Badge>
         </div>
         {member.qualification && (
-          <div className="text-sm text-muted-foreground border-t border-border/50 pt-3 mt-2">
+          <div className="text-xs text-muted-foreground border-t border-border/50 pt-2 mt-2">
             <RichTextRenderer
               content={member.qualification}
               className="text-xs leading-relaxed"
@@ -146,70 +148,99 @@ export default function TeamPage() {
           </div>
         )}
       </CardHeader>
-      <CardContent className="pt-2">
+      <CardContent className="pt-0 p-4">
         {member.description && (
-          <div className="mb-6 p-3 bg-muted/30 rounded-lg border border-border/30">
+          <div className="mb-3 p-2 bg-muted/30 rounded-md border border-border/30">
             <RichTextRenderer
               content={member.description}
-              className="text-sm text-muted-foreground leading-relaxed"
+              className="text-xs text-muted-foreground leading-relaxed"
             />
           </div>
         )}
 
         {member.skills && (
-          <div className="mb-6">
-            <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
-              <div className="w-1 h-4 bg-primary rounded-full"></div>
-              Expertise
+          <div className="mb-3">
+            <h4 className="font-semibold text-xs mb-2 flex items-center gap-1">
+              <div className="w-0.5 h-3 bg-primary rounded-full"></div>
+              Skills
             </h4>
-            <div className="flex flex-wrap gap-2">
-              {member.skills.split(",").map((skill, index) => (
+            <div className="flex flex-wrap gap-1">
+              {member.skills
+                .split(",")
+                .slice(0, 4)
+                .map((skill, index) => (
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="text-xs py-0.5 px-1.5 font-medium"
+                  >
+                    {skill.trim()}
+                  </Badge>
+                ))}
+              {member.skills.split(",").length > 4 && (
                 <Badge
-                  key={index}
                   variant="secondary"
-                  className="text-xs py-1 px-2 font-medium"
+                  className="text-xs py-0.5 px-1.5 font-medium"
                 >
-                  {skill.trim()}
+                  +{member.skills.split(",").length - 4}
                 </Badge>
-              ))}
+              )}
             </div>
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2 justify-center pt-4 border-t border-border/30">
+        <div className="flex flex-wrap gap-1 justify-center pt-2 border-t border-border/30">
           {member.email && (
-            <Button variant="outline" size="sm" asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              asChild
+            >
               <a href={`mailto:${member.email}`}>
-                <Mail className="w-4 h-4 mr-1" />
+                <Mail className="w-3 h-3 mr-1" />
                 Email
               </a>
             </Button>
           )}
           {member.phone != 0 && (
-            <Button variant="outline" size="sm" asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              asChild
+            >
               <a href={`tel:${member.phone}`}>
-                <Phone className="w-4 h-4 mr-1" />
-                Phone
+                <Phone className="w-3 h-3 mr-1" />
+                Call
               </a>
             </Button>
           )}
           {member.github && (
-            <Button variant="outline" size="sm" asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              asChild
+            >
               <a href={member.github} target="_blank" rel="noopener noreferrer">
-                <Github className="w-4 h-4 mr-1" />
-                GitHub
+                <Github className="w-3 h-3" />
               </a>
             </Button>
           )}
           {member.linkedin && (
-            <Button variant="outline" size="sm" asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              asChild
+            >
               <a
                 href={member.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Linkedin className="w-4 h-4 mr-1" />
-                LinkedIn
+                <Linkedin className="w-3 h-3" />
               </a>
             </Button>
           )}
@@ -217,6 +248,23 @@ export default function TeamPage() {
       </CardContent>
     </Card>
   );
+
+  const getGridColumns = (memberCount: number, category: string) => {
+    // For Board of Students (direc), use 6 columns to handle up to 18 members
+    if (category === "direc") {
+      if (memberCount <= 6) return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6";
+      if (memberCount <= 12) return "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6";
+      return "grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6";
+    }
+
+    // For other categories, use more conservative layouts
+    if (memberCount >= 6) return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4";
+    if (memberCount >= 4) return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4";
+    if (memberCount >= 3) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+    if (memberCount === 2)
+      return "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto";
+    return "grid-cols-1 max-w-sm mx-auto";
+  };
 
   const TeamSection = ({
     category,
@@ -244,13 +292,7 @@ export default function TeamPage() {
         </div>
       ) : (
         <div
-          className={`grid gap-8 ${
-            members.length >= 3
-              ? "md:grid-cols-3"
-              : members.length === 2
-              ? "md:grid-cols-2 max-w-4xl mx-auto"
-              : "md:grid-cols-1 max-w-md mx-auto"
-          }`}
+          className={`grid gap-4 ${getGridColumns(members.length, category)}`}
         >
           {members.map((member) => (
             <TeamMemberCard key={member.id} member={member} />

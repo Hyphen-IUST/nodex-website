@@ -61,12 +61,11 @@ type FormData = z.infer<typeof formSchema>;
 
 const departments = [
   "Computer Science and Engineering",
-  "Information Technology",
+  "Robotics and Automation",
   "Electronics and Communication Engineering",
   "Electrical Engineering",
   "Mechanical Engineering",
   "Civil Engineering",
-  "Chemical Engineering",
   "Other",
 ];
 

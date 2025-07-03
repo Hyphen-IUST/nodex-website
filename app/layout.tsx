@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "../components/global/theme-provider";
+import { MaintenanceWrapper } from "../components/global/maintenance-wrapper";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
@@ -35,7 +36,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <MaintenanceWrapper>{children}</MaintenanceWrapper>
           <Toaster />
         </ThemeProvider>
       </body>

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Header } from "@/components/global/header";
 import { Footer } from "@/components/global/footer";
+import { BOSNotAcceptingPage } from "@/components/global/bos-not-accepting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,6 +33,7 @@ import {
   UserPlus,
   Sparkles,
 } from "lucide-react";
+import { PageLoading } from "@/components/ui/page-loading";
 
 const onboardingSchema = z.object({
   // Personal Information
@@ -78,6 +80,10 @@ type OnboardingFormData = z.infer<typeof onboardingSchema>;
 export default function BOSOnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(true);
+  const [acceptingStatus, setAcceptingStatus] = useState<
+    "accepting" | "not-accepting"
+  >("accepting");
   const { toast } = useToast();
 
   const {
@@ -163,6 +169,39 @@ export default function BOSOnboardingPage() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    // Check accepting status from web metadata
+    const fetchAcceptingStatus = async () => {
+      try {
+        const response = await fetch("/api/web-metadata");
+        const data = await response.json();
+        if (data.accepting) {
+          setAcceptingStatus("accepting");
+        } else {
+          setAcceptingStatus("not-accepting");
+        }
+      } catch (error) {
+        console.error("Error fetching accepting status:", error);
+        setAcceptingStatus("accepting"); // Default to accepting on error
+      } finally {
+        setIsCheckingStatus(false);
+      }
+    };
+
+    fetchAcceptingStatus();
+  }, []);
+
+  // Show loading while checking status
+  if (isCheckingStatus) {
+    return (
+      <PageLoading message="Loading..." showHeader={false} showFooter={false} />
+    );
+  }
+
+  if (acceptingStatus === "not-accepting") {
+    return <BOSNotAcceptingPage />;
+  }
 
   if (isSubmitted) {
     return (

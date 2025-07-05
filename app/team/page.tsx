@@ -7,18 +7,11 @@ import { Footer } from "../../components/global/footer";
 import { RichTextRenderer } from "@/components/ui/rich-text-renderer";
 import { PageLoading } from "@/components/ui/page-loading";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
-import {
-  Github,
-  Linkedin,
-  Mail,
-  Award,
-  Users,
-  GraduationCap,
-  Phone,
-} from "lucide-react";
+import { Github, Linkedin, Mail, Award, Users, Phone } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface TeamMember {
   id: string;
@@ -72,12 +65,10 @@ export default function TeamPage() {
 
   const getCategoryTitle = (category: string) => {
     switch (category) {
-      case "exec":
-        return "Executive Board";
       case "direc":
-        return "Board of Students";
-      case "faculty":
-        return "Board of Faculty";
+        return "Board of Students (BoS)";
+      case "exec":
+        return "Core Committee";
       case "leads":
         return "Operations Team";
       default:
@@ -88,13 +79,11 @@ export default function TeamPage() {
   const getCategoryDescription = (category: string) => {
     switch (category) {
       case "exec":
-        return "The core leadership team responsible for strategic direction and overall management of NodeX";
+        return "Leadership team responsible for strategic direction and overall management";
       case "direc":
-        return "Student representatives managing specific departments, activities, and fostering community engagement";
-      case "faculty":
-        return "Faculty members providing guidance, academic oversight, and mentorship to the organization";
+        return "Student representatives providing mentorship and fostering community engagement";
       case "leads":
-        return "Operations specialists overseeing key areas like outreach, management, events, and day-to-day organizational activities";
+        return "Operations specialists overseeing key areas and day-to-day activities";
       default:
         return "";
     }
@@ -106,8 +95,6 @@ export default function TeamPage() {
         return <Users className="w-6 h-6" />;
       case "direc":
         return <Award className="w-6 h-6" />;
-      case "faculty":
-        return <GraduationCap className="w-6 h-6" />;
       case "leads":
         return <Users className="w-6 h-6 text-yellow-500" />;
       default:
@@ -293,13 +280,13 @@ export default function TeamPage() {
                 className="h-7 px-2 text-xs"
                 asChild
               >
-                <a
+                <Link
                   href={member.github}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Github className="w-3 h-3" />
-                </a>
+                </Link>
               </Button>
             )}
             {member.linkedin && (
@@ -309,13 +296,13 @@ export default function TeamPage() {
                 className="h-7 px-2 text-xs"
                 asChild
               >
-                <a
+                <Link
                   href={member.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Linkedin className="w-3 h-3" />
-                </a>
+                </Link>
               </Button>
             )}
           </div>
@@ -422,13 +409,6 @@ export default function TeamPage() {
               <TeamSection
                 category="leads"
                 members={teamData.leads}
-                onActivity={logActivity}
-              />
-
-              {/* Board of Faculty */}
-              <TeamSection
-                category="faculty"
-                members={teamData.faculty}
                 onActivity={logActivity}
               />
 

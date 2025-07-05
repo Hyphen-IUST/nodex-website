@@ -20,9 +20,10 @@ export function Header() {
 
   const navItems = [
     { name: "Home", path: "/" },
-    { name: "Departments", path: "/departments" },
-    { name: "Events", path: "/events" },
     { name: "Team", path: "/team" },
+    { name: "Events", path: "/events" },
+    { name: "Resources", path: "/resources" },
+    { name: "Collaborate", path: "/collaborate" },
     { name: "Join", path: "/join" },
   ];
 
@@ -30,18 +31,31 @@ export function Header() {
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 dark:invert rounded-sm flex items-center justify-center">
+          {/* Left side - IUST and NodeX logos */}
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 flex items-center justify-center">
               <Image
-                src={"https://i.ibb.co/RpRrXLM8/node-Xblack.png"}
-                width={32}
-                height={32}
-                alt="NodeX Logo"
+                src="https://i.ibb.co/QFN6zx4T/iust-logo.png"
+                width={40}
+                height={40}
+                alt="IUST Logo"
+                className="object-contain"
               />
             </div>
-            <span className="text-xl font-bold">NodeX</span>
-          </Link>
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="w-8 h-8 dark:invert rounded-sm flex items-center justify-center">
+                <Image
+                  src={"https://i.ibb.co/RpRrXLM8/node-Xblack.png"}
+                  width={32}
+                  height={32}
+                  alt="NodeX Logo"
+                />
+              </div>
+              <span className="text-xl font-bold">NodeX</span>
+            </Link>
+          </div>
 
+          {/* Center - Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
@@ -56,6 +70,10 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+          </div>
+
+          {/* Right - Theme Toggle */}
+          <div className="flex items-center">
             <ThemeToggle />
           </div>
 

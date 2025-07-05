@@ -49,15 +49,17 @@ export function HeroSection() {
           }`}
         >
           <Badge className="mb-8 bg-muted text-muted-foreground border-border hover:bg-muted/80">
-            IUST Tech Club for Coders & Future Scholars
+            Think. Solve. Transform.
           </Badge>
           <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-8 tracking-tight">
             NodeX
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl mb-12 text-muted-foreground max-w-4xl leading-relaxed">
-            A dynamic community where students grow as ethical technologists,
-            problem-solvers, and future scholars through collaborative learning,
-            real-world projects, and peer-driven mentorship.
+            A vibrant, student-led technical club at IUST Kashmir, bridging the
+            gap between academic theory and real-world application. We empower
+            students to become leaders, builders, and ethical technologists
+            through collaborative learning, innovative projects, and peer-driven
+            mentorship.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-16">

@@ -11,24 +11,38 @@ interface MaintenanceWrapperProps {
 
 export function MaintenanceWrapper({ children }: MaintenanceWrapperProps) {
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const [isStaffAuthenticated, setIsStaffAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
   useEffect(() => {
-    checkMaintenanceStatus();
+    checkMaintenanceAndAuth();
   }, []);
 
-  const checkMaintenanceStatus = async () => {
+  const checkMaintenanceAndAuth = async () => {
     try {
-      const response = await fetch("/api/web-metadata");
-      if (response.ok) {
-        const data = await response.json();
-        setIsMaintenanceMode(data.maintenance || false);
+      // Check maintenance status and staff authentication in parallel
+      const [maintenanceResponse, authResponse] = await Promise.all([
+        fetch("/api/web-metadata"),
+        fetch("/api/auth-check"),
+      ]);
+
+      // Check maintenance status
+      if (maintenanceResponse.ok) {
+        const maintenanceData = await maintenanceResponse.json();
+        setIsMaintenanceMode(maintenanceData.maintenance || false);
+      }
+
+      // Check staff authentication
+      if (authResponse.ok) {
+        const authData = await authResponse.json();
+        setIsStaffAuthenticated(authData.authenticated || false);
       }
     } catch (error) {
-      console.error("Error checking maintenance status:", error);
-      // Default to not in maintenance mode if there's an error
+      console.error("Error checking maintenance status and auth:", error);
+      // Default to not in maintenance mode and not authenticated if there's an error
       setIsMaintenanceMode(false);
+      setIsStaffAuthenticated(false);
     } finally {
       setLoading(false);
     }
@@ -46,14 +60,16 @@ export function MaintenanceWrapper({ children }: MaintenanceWrapperProps) {
   const isRecruitment = pathname.startsWith("/recruitment");
 
   // For BOS onboarding and recruitment, exclude them from general maintenance mode
-  // Only show maintenance if maintenance is on AND it's not BOS onboarding AND not recruitment
+  // Staff members can bypass maintenance mode if authenticated
+  // Only show maintenance if maintenance is on AND it's not BOS onboarding AND not recruitment AND user is not staff
   const shouldShowMaintenance =
     isMaintenanceMode &&
     pathname !== "/maintenance" &&
     !isBOSOnboarding &&
-    !isRecruitment;
+    !isRecruitment &&
+    !isStaffAuthenticated;
 
-  // Show maintenance page if general maintenance is on (excluding BOS onboarding and recruitment)
+  // Show maintenance page if general maintenance is on (excluding BOS onboarding, recruitment, and staff)
   if (shouldShowMaintenance) {
     return <MaintenancePage />;
   }

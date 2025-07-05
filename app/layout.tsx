@@ -16,8 +16,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NodeX - From Tier 3 to Tier 1",
-  description: "IUST Tech Club for Coders & Future Scholars",
+  title: "NodeX - Think. Solve. Transform.",
+  description:
+    "NodeX is a vibrant, student-led technical club at IUST Kashmir, fostering innovation, collaboration, and shared growth through hackathons, workshops, and collaborative projects.",
+  keywords:
+    "NodeX, IUST, tech club, programming, hackathons, workshops, Kashmir, student organization, innovation, collaboration",
+  authors: [{ name: "NodeX Team" }],
+  openGraph: {
+    title: "NodeX - Think. Solve. Transform.",
+    description:
+      "Student-led technical club at IUST Kashmir fostering innovation and collaboration",
+    siteName: "NodeX",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NodeX - Think. Solve. Transform.",
+    description:
+      "Student-led technical club at IUST Kashmir fostering innovation and collaboration",
+  },
 };
 
 export default function RootLayout({

@@ -120,11 +120,11 @@ export function AboutSection() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
             {coreValues.map((value, index) => (
               <Card
                 key={index}
-                className="border-border hover:shadow-lg transition-all duration-300 group"
+                className="border-border hover:shadow-lg transition-all duration-300 group w-full max-w-sm sm:max-w-[320px] flex-shrink-0"
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start space-x-4">

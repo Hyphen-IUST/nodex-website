@@ -4,7 +4,7 @@ interface TeamMember {
   id: string;
   name: string;
   photo?: string;
-  category: "exec" | "direc" | "faculty" | "leads";
+  category: "exec" | "direc" | "leads";
   title: string;
   qualification?: string;
   description?: string;
@@ -53,9 +53,6 @@ export async function GET() {
     const groupedTeam = {
       direc: teamMembers.filter(
         (member: TeamMember) => member.category === "direc"
-      ),
-      faculty: teamMembers.filter(
-        (member: TeamMember) => member.category === "faculty"
       ),
       exec: teamMembers.filter(
         (member: TeamMember) => member.category === "exec"

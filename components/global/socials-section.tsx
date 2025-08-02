@@ -49,7 +49,7 @@ export function SocialsSection() {
           {socials.map((social, index) => (
             <Card
               key={index}
-              className="border-border hover:shadow-lg transition-shadow text-center"
+              className="border-border hover:shadow-lg transition-shadow text-center flex flex-col h-full"
             >
               <CardHeader className="pb-3">
                 <div className="flex justify-center mb-4 text-primary">
@@ -57,13 +57,13 @@ export function SocialsSection() {
                 </div>
                 <CardTitle className="text-2xl">{social.name}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-6">
+              <CardContent className="flex-1 flex flex-col">
+                <p className="text-muted-foreground mb-6 flex-1">
                   {social.description}
                 </p>
                 <Button
                   asChild
-                  className="w-full bg-foreground text-background hover:bg-foreground/90"
+                  className="w-full bg-foreground text-background hover:bg-foreground/90 mt-auto"
                 >
                   <a
                     href={social.link}

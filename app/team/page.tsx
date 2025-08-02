@@ -18,7 +18,7 @@ interface TeamMember {
   id: string;
   name: string;
   photo?: string;
-  category: "exec" | "direc" | "faculty" | "leads";
+  category: "exec" | "direc" | "leads";
   title: string;
   qualification?: string;
   description?: string;
@@ -32,7 +32,6 @@ interface TeamMember {
 interface TeamData {
   exec: TeamMember[];
   direc: TeamMember[];
-  faculty: TeamMember[];
   leads: TeamMember[];
 }
 
@@ -40,7 +39,7 @@ export default function TeamPage() {
   const [teamData, setTeamData] = useState<TeamData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("direc");
+  const [activeTab, setActiveTab] = useState("exec");
   const { logActivity } = useActivityLogger({
     trackPageViews: true,
     trackClicks: true,
@@ -71,8 +70,6 @@ export default function TeamPage() {
         return "Board of Students";
       case "exec":
         return "Core Committee";
-      case "faculty":
-        return "Faculty Mentors";
       case "leads":
         return "Operations Team";
       default:
@@ -86,8 +83,6 @@ export default function TeamPage() {
         return "Leadership team responsible for strategic direction and overall management";
       case "direc":
         return "Student representatives providing mentorship and fostering community engagement";
-      case "faculty":
-        return "Faculty mentors providing guidance and academic support";
       case "leads":
         return "Operations specialists overseeing key areas and day-to-day activities";
       default:
@@ -128,16 +123,23 @@ export default function TeamPage() {
       return text.length > 200;
     };
 
+    // Skills helper functions
     const getDisplaySkills = (skillsText: string, isExpanded: boolean) => {
       const skills = skillsText.split(",").map((skill) => skill.trim());
-      if (!isExpanded && skills.length > 4) {
-        return skills.slice(0, 4);
+      if (isExpanded) {
+        return skills;
       }
+      // When collapsed, we'll let CSS handle the line limiting
       return skills;
     };
 
-    const shouldShowMoreSkills = (skillsText: string) => {
-      return skillsText.split(",").length > 4;
+    const getTotalSkillsCount = (skillsText: string) => {
+      return skillsText.split(",").length;
+    };
+
+    const hasMoreSkills = (skillsText: string) => {
+      const totalSkills = skillsText.split(",").length;
+      return totalSkills > 2; // Show +more if more than 2 skills (likely to wrap)
     };
 
     return (
@@ -172,111 +174,130 @@ export default function TeamPage() {
         </CardHeader>
 
         <CardContent className="pt-0 p-4 flex-1 flex flex-col">
-          {/* Expandable content sections - will grow to fill available space */}
-          <div className="flex-1">
-            <div className="space-y-4">
-              {member.qualification && (
-                <div className="p-3 bg-muted/50 rounded-md border border-border/50">
-                  <h4 className="text-sm font-semibold mb-2 text-foreground">
-                    Qualification
-                  </h4>
-                  <RichTextRenderer
-                    content={getDisplayText(
-                      member.qualification,
-                      qualificationExpanded
-                    )}
-                    className="text-sm text-muted-foreground leading-relaxed"
-                  />
-                  {showViewMoreButton(member.qualification) && (
-                    <button
-                      onClick={() => {
-                        setQualificationExpanded(!qualificationExpanded);
-                        onActivity("team_member_qualification_toggle", {
-                          member_name: member.name,
-                          member_id: member.id,
-                          expanded: !qualificationExpanded,
-                        });
-                      }}
-                      className="text-primary hover:text-primary/80 text-sm font-medium mt-2 block"
-                    >
-                      {qualificationExpanded ? "Show Less" : "Read More"}
-                    </button>
+          {/* Expandable content sections */}
+          <div className="space-y-4 mb-4">
+            {member.qualification && (
+              <div className="p-3 bg-muted/50 rounded-md border border-border/50">
+                <h4 className="text-sm font-semibold mb-2 text-foreground">
+                  Qualification
+                </h4>
+                <RichTextRenderer
+                  content={getDisplayText(
+                    member.qualification,
+                    qualificationExpanded
                   )}
-                </div>
-              )}
+                  className="text-sm text-muted-foreground leading-relaxed"
+                />
+                {showViewMoreButton(member.qualification) && (
+                  <button
+                    onClick={() => {
+                      setQualificationExpanded(!qualificationExpanded);
+                      onActivity("team_member_qualification_toggle", {
+                        member_name: member.name,
+                        member_id: member.id,
+                        expanded: !qualificationExpanded,
+                      });
+                    }}
+                    className="text-primary hover:text-primary/80 text-sm font-medium mt-2 block"
+                  >
+                    {qualificationExpanded ? "Show Less" : "Read More"}
+                  </button>
+                )}
+              </div>
+            )}
 
-              {member.description && (
-                <div className="p-3 bg-muted/50 rounded-md border border-border/50">
-                  <h4 className="text-sm font-semibold mb-2 text-foreground">
-                    About
-                  </h4>
-                  <RichTextRenderer
-                    content={getDisplayText(
-                      member.description,
-                      descriptionExpanded
-                    )}
-                    className="text-sm text-muted-foreground leading-relaxed"
-                  />
-                  {showViewMoreButton(member.description) && (
-                    <button
-                      onClick={() => {
-                        setDescriptionExpanded(!descriptionExpanded);
-                        onActivity("team_member_description_toggle", {
-                          member_name: member.name,
-                          member_id: member.id,
-                          expanded: !descriptionExpanded,
-                        });
-                      }}
-                      className="text-primary hover:text-primary/80 text-sm font-medium mt-2 block"
-                    >
-                      {descriptionExpanded ? "Show Less" : "Read More"}
-                    </button>
+            {member.description && (
+              <div className="p-3 bg-muted/50 rounded-md border border-border/50">
+                <h4 className="text-sm font-semibold mb-2 text-foreground">
+                  About
+                </h4>
+                <RichTextRenderer
+                  content={getDisplayText(
+                    member.description,
+                    descriptionExpanded
                   )}
-                </div>
-              )}
-            </div>
+                  className="text-sm text-muted-foreground leading-relaxed"
+                />
+                {showViewMoreButton(member.description) && (
+                  <button
+                    onClick={() => {
+                      setDescriptionExpanded(!descriptionExpanded);
+                      onActivity("team_member_description_toggle", {
+                        member_name: member.name,
+                        member_id: member.id,
+                        expanded: !descriptionExpanded,
+                      });
+                    }}
+                    className="text-primary hover:text-primary/80 text-sm font-medium mt-2 block"
+                  >
+                    {descriptionExpanded ? "Show Less" : "Read More"}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Skills section - consistent position across all cards */}
+          {/* Spacer to push skills and contact to bottom */}
+          <div className="flex-1"></div>
+
+          {/* Skills section - always at same level */}
           {member.skills && (
-            <div className="mt-4 pt-4 border-t border-border/50">
+            <div className="pt-4 border-t border-border/50 mb-4">
               <h4 className="text-sm font-semibold mb-2 text-foreground">
                 Skills
               </h4>
-              <div className="flex flex-wrap gap-2 min-h-[2rem]">
+              <div
+                className={`flex flex-wrap gap-2 min-h-[2rem] ${
+                  !skillsExpanded ? "overflow-hidden max-h-[3.5rem]" : ""
+                }`}
+              >
                 {getDisplaySkills(member.skills, skillsExpanded).map(
-                  (skill, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
+                  (skill: string, index: number) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="text-xs whitespace-nowrap"
+                    >
                       {skill}
                     </Badge>
                   )
                 )}
-                {!skillsExpanded && shouldShowMoreSkills(member.skills) && (
-                  <Badge variant="outline" className="text-xs">
-                    +{member.skills.split(",").length - 4} more
-                  </Badge>
-                )}
               </div>
-              {shouldShowMoreSkills(member.skills) && (
-                <button
+              {!skillsExpanded && hasMoreSkills(member.skills) && (
+                <Badge
+                  variant="outline"
+                  className="text-xs cursor-pointer hover:bg-muted transition-colors mt-2"
                   onClick={() => {
-                    setSkillsExpanded(!skillsExpanded);
-                    onActivity("team_member_skills_toggle", {
+                    setSkillsExpanded(true);
+                    onActivity("team_member_skills_expand", {
                       member_name: member.name,
                       member_id: member.id,
-                      expanded: !skillsExpanded,
                     });
                   }}
-                  className="text-primary hover:text-primary/80 text-sm font-medium mt-2 block"
                 >
-                  {skillsExpanded ? "Show Less" : "Show All Skills"}
-                </button>
+                  +{getTotalSkillsCount(member.skills) - 2} skills
+                </Badge>
+              )}
+              {skillsExpanded && hasMoreSkills(member.skills) && (
+                <Badge
+                  variant="outline"
+                  className="text-xs cursor-pointer hover:bg-muted transition-colors mt-2"
+                  onClick={() => {
+                    setSkillsExpanded(false);
+                    onActivity("team_member_skills_collapse", {
+                      member_name: member.name,
+                      member_id: member.id,
+                    });
+                  }}
+                >
+                  -show less
+                </Badge>
               )}
             </div>
           )}
 
           {/* Contact buttons - fixed at bottom */}
-          <div className="mt-4 pt-4 border-t border-border/50">
+          <div className="pt-4 border-t border-border/50">
             <div className="flex justify-center space-x-3">
               {member.email && (
                 <Link href={`mailto:${member.email}`}>
@@ -329,7 +350,7 @@ export default function TeamPage() {
                   </Button>
                 </Link>
               )}
-              {member.phone && (
+              {member.phone != 0 && (
                 <Link href={`tel:${member.phone}`}>
                   <Button
                     variant="outline"
@@ -351,13 +372,6 @@ export default function TeamPage() {
         </CardContent>
       </Card>
     );
-  };
-  const getGridColumns = (count: number) => {
-    if (count === 1) return "grid-cols-1 max-w-md mx-auto";
-    if (count === 2) return "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto";
-    if (count === 3)
-      return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto";
-    return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
   };
 
   if (loading) {
@@ -391,8 +405,8 @@ export default function TeamPage() {
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Team</h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Meet the passionate individuals who drive NodeX forward. Our
-              diverse team of students and faculty members work together to
-              create an amazing tech community.
+              diverse team of students work together to create an amazing tech
+              community.
             </p>
           </div>
 
@@ -402,33 +416,25 @@ export default function TeamPage() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-4 mb-8">
-                <TabsTrigger value="direc" className="flex items-center gap-2">
-                  <Award className="w-4 h-4" />
-                  <span className="hidden sm:inline">Board of Students</span>
-                  <span className="sm:hidden">BoS</span>
-                </TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 mb-8">
                 <TabsTrigger value="exec" className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   <span className="hidden sm:inline">Core Committee</span>
                   <span className="sm:hidden">Core</span>
+                </TabsTrigger>
+                <TabsTrigger value="direc" className="flex items-center gap-2">
+                  <Award className="w-4 h-4" />
+                  <span className="hidden sm:inline">Board of Students</span>
+                  <span className="sm:hidden">BoS</span>
                 </TabsTrigger>
                 <TabsTrigger value="leads" className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   <span className="hidden sm:inline">Operations Team</span>
                   <span className="sm:hidden">Ops</span>
                 </TabsTrigger>
-                <TabsTrigger
-                  value="faculty"
-                  className="flex items-center gap-2"
-                >
-                  <Award className="w-4 h-4" />
-                  <span className="hidden sm:inline">Faculty Mentors</span>
-                  <span className="sm:hidden">Faculty</span>
-                </TabsTrigger>
               </TabsList>
 
-              {["direc", "exec", "leads", "faculty"].map((category) => (
+              {["exec", "direc", "leads"].map((category) => (
                 <TabsContent key={category} value={category} className="mt-0">
                   <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold mb-4">
@@ -441,17 +447,17 @@ export default function TeamPage() {
 
                   {teamData[category as keyof TeamData] &&
                   teamData[category as keyof TeamData].length > 0 ? (
-                    <div
-                      className={`grid gap-6 ${getGridColumns(
-                        teamData[category as keyof TeamData].length
-                      )}`}
-                    >
+                    <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
                       {teamData[category as keyof TeamData].map((member) => (
-                        <TeamMemberCard
+                        <div
                           key={member.id}
-                          member={member}
-                          onActivity={logActivity}
-                        />
+                          className="w-full max-w-xs sm:max-w-[280px] flex-shrink-0"
+                        >
+                          <TeamMemberCard
+                            member={member}
+                            onActivity={logActivity}
+                          />
+                        </div>
                       ))}
                     </div>
                   ) : (

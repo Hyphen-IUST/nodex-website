@@ -5,7 +5,7 @@ import { Header } from "../../components/global/header";
 import { Footer } from "../../components/global/footer";
 import { GallerySection } from "../../components/global/gallery-section";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Handshake, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,7 +98,6 @@ export default function CollaboratePage() {
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <div className="flex items-center justify-center mb-6">
-            <Handshake className="w-8 h-8 mr-3 text-primary" />
             <h1 className="text-4xl md:text-6xl font-bold">
               Collaboration & Workshop Requests
             </h1>

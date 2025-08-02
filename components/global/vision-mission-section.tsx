@@ -16,7 +16,7 @@ export function VisionMissionSection() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="space-y-12 max-w-4xl mx-auto">
           {/* Vision */}
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
@@ -40,7 +40,7 @@ export function VisionMissionSection() {
             </div>
             <div className="bg-card p-8 rounded-lg border border-border">
               <h4 className="text-xl font-semibold mb-4 text-primary">
-                NodeX – Think. Solve. Transform.
+                NodeX: Think. Solve. Transform.
               </h4>
               <div className="space-y-4 text-left">
                 <p className="text-muted-foreground">

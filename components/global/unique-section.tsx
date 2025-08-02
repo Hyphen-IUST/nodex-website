@@ -15,7 +15,7 @@ export function UniqueSection() {
                 <h3 className="text-xl font-semibold mb-3">Hybrid Model</h3>
                 <p className="text-muted-foreground">
                   Bridges practical software development with academic research
-                  prep — a rare combination in college tech clubs.
+                  prep, a rare combination in college tech clubs.
                 </p>
               </div>
               <div>

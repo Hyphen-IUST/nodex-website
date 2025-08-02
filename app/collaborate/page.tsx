@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Header } from "../../components/global/header";
 import { Footer } from "../../components/global/footer";
+import { GallerySection } from "../../components/global/gallery-section";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Handshake, Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +22,8 @@ export default function CollaboratePage() {
     requestTypes: [] as string[],
     details: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const requestTypes = [
     "Collaboration on an event",
@@ -40,14 +44,26 @@ export default function CollaboratePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
+      // Get reCAPTCHA token
+      const token = recaptchaRef.current?.getValue();
+      if (!token) {
+        alert("Please complete the reCAPTCHA verification.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const response = await fetch("/api/collaborate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken: token,
+        }),
       });
 
       if (response.ok) {
@@ -62,12 +78,15 @@ export default function CollaboratePage() {
           requestTypes: [],
           details: "",
         });
+        recaptchaRef.current?.reset();
       } else {
         alert("Failed to submit request. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -214,12 +233,30 @@ export default function CollaboratePage() {
                   />
                 </div>
 
+                <div>
+                  <Label className="text-base font-medium">
+                    reCAPTCHA Verification *
+                  </Label>
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={
+                      process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
+                      "6LdKE04qAAAAAMDV8_dBc8TfU2shWh3Z_CyuF5V4"
+                    }
+                    onChange={() => {
+                      // Token validation happens in handleSubmit
+                    }}
+                    className="mt-2"
+                  />
+                </div>
+
                 <div className="text-center">
                   <Button
                     type="submit"
+                    disabled={isSubmitting}
                     className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3"
                   >
-                    Submit Request
+                    {isSubmitting ? "Submitting..." : "Submit Request"}
                   </Button>
                 </div>
               </form>
@@ -227,6 +264,9 @@ export default function CollaboratePage() {
           </Card>
         </div>{" "}
       </section>
+
+      {/* Gallery Section */}
+      <GallerySection />
 
       <Footer />
     </div>

@@ -3,82 +3,69 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "../../components/global/header";
 import { Footer } from "../../components/global/footer";
-import { BookOpen, Github, Map, Code, FileText } from "lucide-react";
+import {
+  BookOpen,
+  Github,
+  Map,
+  Code,
+  FileText,
+  Database,
+  Lightbulb,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-interface Resource {
+interface ResourceCategory {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  category: string;
-  link: string;
-}
-
-interface ResourceData {
-  notes: Resource[];
-  books: Resource[];
-  cheatsheets: Resource[];
-  roadmaps: Resource[];
+  icon: string;
+  slug: string;
+  resource_count?: number;
 }
 
 export default function ResourcesPage() {
-  const [resourceData, setResourceData] = useState<ResourceData | null>(null);
+  const [categories, setCategories] = useState<ResourceCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchResourceData();
+    fetchCategories();
   }, []);
 
-  const fetchResourceData = async () => {
+  const fetchCategories = async () => {
     try {
       const response = await fetch("/api/resources");
       if (response.ok) {
         const data = await response.json();
-        setResourceData(data.resources);
+        if (data.success) {
+          setCategories(data.categories);
+        } else {
+          setError(data.error || "Failed to fetch categories");
+        }
+      } else {
+        setError("Failed to fetch categories");
       }
     } catch (error) {
-      console.error("Error fetching resources:", error);
+      console.error("Error fetching categories:", error);
+      setError("Failed to fetch categories");
     } finally {
       setLoading(false);
     }
   };
 
-  const studyMaterials = [
-    {
-      title: "Semester-wise Notes",
-      description:
-        "B.Tech CSE-focused notes, categorized by subjects and semesters.",
-      icon: <BookOpen className="w-6 h-6" />,
-      link: "/resources/notes",
-      count: resourceData?.notes?.length || 0,
-    },
-    {
-      title: "Reference Books & PDFs",
-      description:
-        "Essential textbooks and reference materials for CSE curriculum.",
-      icon: <FileText className="w-6 h-6" />,
-      link: "/resources/books",
-      count: resourceData?.books?.length || 0,
-    },
-    {
-      title: "Cheat Sheets",
-      description: "Quick revision documents and subject-wise cheat sheets.",
-      icon: <Code className="w-6 h-6" />,
-      link: "/resources/cheatsheets",
-      count: resourceData?.cheatsheets?.length || 0,
-    },
-  ];
-
-  const roadmaps = [
-    "Full Stack Web Development",
-    "Android & iOS Development",
-    "AI & Machine Learning",
-    "Cybersecurity",
-    "Competitive Programming",
-    "UI/UX Design",
-    "Open Source Journey",
-  ];
+  const getIconComponent = (iconName: string) => {
+    const iconMap: { [key: string]: React.ReactNode } = {
+      BookOpen: <BookOpen className="w-6 h-6" />,
+      FileText: <FileText className="w-6 h-6" />,
+      Code: <Code className="w-6 h-6" />,
+      Map: <Map className="w-6 h-6" />,
+      Database: <Database className="w-6 h-6" />,
+      Lightbulb: <Lightbulb className="w-6 h-6" />,
+    };
+    return iconMap[iconName] || <BookOpen className="w-6 h-6" />;
+  };
 
   if (loading) {
     return (
@@ -87,6 +74,22 @@ export default function ResourcesPage() {
         <section className="pt-32 pb-20 px-6">
           <div className="max-w-6xl mx-auto text-center">
             <p className="text-muted-foreground">Loading resources...</p>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <Header />
+        <section className="pt-32 pb-20 px-6">
+          <div className="max-w-6xl mx-auto text-center">
+            <h1 className="text-3xl font-bold mb-4">Error Loading Resources</h1>
+            <p className="text-muted-foreground mb-6">{error}</p>
+            <Button onClick={fetchCategories}>Try Again</Button>
           </div>
         </section>
         <Footer />
@@ -106,48 +109,50 @@ export default function ResourcesPage() {
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Empowering students with knowledge, tools, and mentorship to build,
-            learn, and grow.
+            learn, and grow in technology.
           </p>
         </div>
       </section>
 
-      {/* Study Materials Section */}
+      {/* Resource Categories Section */}
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Study Material
+              Browse Resources
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              A curated collection of academic and technical resources to
-              support learning inside and outside the classroom.
+              Explore our curated collection of educational materials, guides,
+              and tools organized by category to support your learning journey.
             </p>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {studyMaterials.map((material, index) => (
+              {categories.map((category) => (
                 <Card
-                  key={index}
+                  key={category.id}
                   className="border-border hover:shadow-lg transition-shadow"
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-center space-x-3">
-                      <div className="text-primary">{material.icon}</div>
-                      <CardTitle className="text-xl">
-                        {material.title}
-                      </CardTitle>
+                      <div className="text-primary">
+                        {getIconComponent(category.icon)}
+                      </div>
+                      <CardTitle className="text-xl">{category.name}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground mb-4">
-                      {material.description}
+                      {category.description}
                     </p>
-                    {material.count > 0 && (
+                    {category.resource_count !== undefined && (
                       <p className="text-sm text-primary mb-4">
-                        {material.count} resources available
+                        {category.resource_count} resources available
                       </p>
                     )}
                     <Button variant="outline" asChild className="w-full">
-                      <a href={material.link}>Explore →</a>
+                      <Link href={`/resources/${category.slug}`}>
+                        Explore {category.name} →
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -162,11 +167,11 @@ export default function ResourcesPage() {
         <div className="max-w-6xl mx-auto">
           <div className="mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              NodeX GitHub Repos
+              NodeX GitHub Organization
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              A centralized space for all NodeX codebases, collaborative
-              projects, and open-source contributions.
+              Access our open-source projects, collaborative repositories, and
+              community contributions on GitHub.
             </p>
 
             <div className="bg-card p-8 rounded-lg border border-border text-center">
@@ -178,7 +183,7 @@ export default function ResourcesPage() {
               </h3>
               <p className="text-muted-foreground mb-6">
                 Explore our repositories, contribute to projects, and
-                collaborate with the community.
+                collaborate with the NodeX community.
               </p>
               <Button
                 asChild
@@ -192,53 +197,6 @@ export default function ResourcesPage() {
                   Visit GitHub →
                 </a>
               </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Roadmaps Section */}
-      <section className="py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Roadmaps & Tutorials
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              Visual learning guides and structured tutorials to help students
-              pick and master a tech stack.
-            </p>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {roadmaps.map((roadmap, index) => (
-                <Card
-                  key={index}
-                  className="border-border hover:shadow-lg transition-shadow"
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="text-primary">
-                        <Map className="w-6 h-6" />
-                      </div>
-                      <CardTitle className="text-lg">{roadmap}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">
-                      Complete learning path from beginner to advanced level.
-                    </p>
-                    <Button variant="outline" asChild className="w-full">
-                      <a
-                        href={`/resources/roadmaps/${roadmap
-                          .toLowerCase()
-                          .replace(/\s+/g, "-")}`}
-                      >
-                        View Roadmap →
-                      </a>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
             </div>
           </div>
         </div>

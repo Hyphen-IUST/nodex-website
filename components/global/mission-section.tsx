@@ -13,7 +13,7 @@ export function MissionSection() {
         </div>
         <p className="text-lg text-muted-foreground leading-relaxed">
           To cultivate a dynamic community where students grow as ethical
-          technologists, problem-solvers, and future scholars—through
+          technologists, problem-solvers, and future scholars through
           collaborative learning, real-world projects, and peer-driven
           mentorship.
         </p>

@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 
-interface Resource {
+interface ResourceCategory {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  category: "notes" | "books" | "cheatsheets" | "roadmaps";
-  link: string;
-  semester?: string;
-  subject?: string;
-  type?: string;
+  icon: string;
+  slug: string;
+  resource_count?: number;
 }
 
 export async function GET() {
@@ -16,69 +14,18 @@ export async function GET() {
     const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
 
     if (!pocketbaseUrl) {
-      // Return fallback data when PocketBase is not configured
       return NextResponse.json(
         {
-          success: true,
-          resources: {
-            notes: [
-              {
-                id: "1",
-                title: "Data Structures and Algorithms",
-                description: "Comprehensive notes for DSA",
-                category: "notes",
-                link: "/resources/notes/dsa",
-                semester: "3",
-                subject: "DSA",
-              },
-              {
-                id: "2",
-                title: "Database Management Systems",
-                description: "DBMS notes with examples",
-                category: "notes",
-                link: "/resources/notes/dbms",
-                semester: "4",
-                subject: "DBMS",
-              },
-            ],
-            books: [
-              {
-                id: "3",
-                title: "Introduction to Algorithms - CLRS",
-                description: "Classic algorithms textbook",
-                category: "books",
-                link: "/resources/books/clrs",
-                type: "PDF",
-              },
-            ],
-            cheatsheets: [
-              {
-                id: "4",
-                title: "Git Commands Cheat Sheet",
-                description: "Essential Git commands reference",
-                category: "cheatsheets",
-                link: "/resources/cheatsheets/git",
-              },
-            ],
-            roadmaps: [
-              {
-                id: "5",
-                title: "Full Stack Development",
-                description: "Complete roadmap for full stack development",
-                category: "roadmaps",
-                link: "/resources/roadmaps/fullstack",
-              },
-            ],
-          },
-          totalResources: 5,
+          success: false,
+          error: "PocketBase configuration not found",
         },
-        { status: 200 }
+        { status: 500 }
       );
     }
 
-    // Fetch resources from PocketBase
-    const response = await fetch(
-      `${pocketbaseUrl}/api/collections/nodex_resources/records?sort=category,title`,
+    // Fetch resource categories from PocketBase
+    const categoriesResponse = await fetch(
+      `${pocketbaseUrl}/api/collections/resource_categories/records?sort=name`,
       {
         method: "GET",
         headers: {
@@ -87,37 +34,73 @@ export async function GET() {
       }
     );
 
-    if (!response.ok) {
-      console.error("PocketBase resources fetch error:", response.status);
+    if (!categoriesResponse.ok) {
+      console.error(
+        "PocketBase categories fetch error:",
+        categoriesResponse.status
+      );
       return NextResponse.json(
-        { message: "Failed to fetch resources data" },
+        {
+          success: false,
+          error: "Failed to fetch resource categories",
+        },
         { status: 500 }
       );
     }
 
-    const data = await response.json();
-    const resources: Resource[] = data.items || [];
+    const categoriesData = await categoriesResponse.json();
+    const categories: ResourceCategory[] = categoriesData.items || [];
 
-    // Group resources by category
-    const groupedResources = {
-      notes: resources.filter((r) => r.category === "notes"),
-      books: resources.filter((r) => r.category === "books"),
-      cheatsheets: resources.filter((r) => r.category === "cheatsheets"),
-      roadmaps: resources.filter((r) => r.category === "roadmaps"),
-    };
+    // For each category, count the resources
+    const categoriesWithCounts = await Promise.all(
+      categories.map(async (category: ResourceCategory) => {
+        try {
+          const resourceCountResponse = await fetch(
+            `${pocketbaseUrl}/api/collections/resources/records?filter=category="${category.id}"&perPage=1`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
 
+          if (resourceCountResponse.ok) {
+            const countData = await resourceCountResponse.json();
+            return {
+              ...category,
+              resource_count: countData.totalItems || 0,
+            };
+          } else {
+            return {
+              ...category,
+              resource_count: 0,
+            };
+          }
+        } catch (error) {
+          console.error(
+            `Error counting resources for category ${category.name}:`,
+            error
+          );
+          return {
+            ...category,
+            resource_count: 0,
+          };
+        }
+      })
+    );
+
+    return NextResponse.json({
+      success: true,
+      categories: categoriesWithCounts,
+    });
+  } catch (error) {
+    console.error("Error fetching resource categories:", error);
     return NextResponse.json(
       {
-        success: true,
-        resources: groupedResources,
-        totalResources: resources.length,
+        success: false,
+        error: "Failed to fetch resource categories",
       },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Error fetching resources data:", error);
-    return NextResponse.json(
-      { message: "Internal server error" },
       { status: 500 }
     );
   }

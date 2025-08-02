@@ -7,6 +7,7 @@ interface CollaborationRequest {
   phone?: string;
   requestTypes: string[];
   details: string;
+  recaptchaToken: string;
 }
 
 export async function POST(request: Request) {
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
       phone,
       requestTypes,
       details,
+      recaptchaToken,
     }: CollaborationRequest = body;
 
     // Validate required fields
@@ -27,10 +29,34 @@ export async function POST(request: Request) {
       !contactName ||
       !email ||
       !requestTypes ||
-      requestTypes.length === 0
+      requestTypes.length === 0 ||
+      !recaptchaToken
     ) {
       return NextResponse.json(
         { message: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    // Verify reCAPTCHA token
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    const recaptchaResponse = await fetch(
+      "https://www.google.com/recaptcha/api/siteverify",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `secret=${recaptchaSecret}&response=${recaptchaToken}`,
+      }
+    );
+
+    const recaptchaData = await recaptchaResponse.json();
+    if (!recaptchaData.success) {
+      return NextResponse.json(
+        {
+          message: "reCAPTCHA verification failed. Please try again.",
+        },
         { status: 400 }
       );
     }

@@ -19,7 +19,7 @@ export function Footer() {
           <span className="text-2xl font-bold">NodeX</span>
         </div>
         <p className="text-muted mb-4">
-          University Tech Club for Coders & Future Scholars
+          Empowering students to build, learn, and grow together
         </p>
         <p className="text-muted/60 text-sm">
           Built by the NodeX community • Open Source • Student-Led

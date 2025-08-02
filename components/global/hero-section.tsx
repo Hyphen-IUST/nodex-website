@@ -48,18 +48,16 @@ export function HeroSection() {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
-          <Badge className="mb-8 bg-muted text-muted-foreground border-border hover:bg-muted/80">
-            Think. Solve. Transform.
-          </Badge>
-          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-8 tracking-tight">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 tracking-tight text-foreground">
             NodeX
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl mb-12 text-muted-foreground max-w-4xl leading-relaxed">
-            A vibrant, student-led technical club at IUST Kashmir, bridging the
-            gap between academic theory and real-world application. We empower
-            students to become leaders, builders, and ethical technologists
-            through collaborative learning, innovative projects, and peer-driven
-            mentorship.
+          <Badge className="mb-8 bg-muted text-foreground border-border hover:bg-muted/80">
+            Think. Solve. Transform.
+          </Badge>
+          <p className="text-lg sm:text-xl md:text-2xl mb-8 text-muted-foreground max-w-4xl leading-relaxed">
+            A student-led technical club at IUST Kashmir, bridging the gap
+            between academic theory and real-world application through
+            innovation, collaboration, and shared growth.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-16">
@@ -68,7 +66,7 @@ export function HeroSection() {
                 size="lg"
                 className="bg-foreground text-background hover:bg-foreground/90 px-8 py-3 w-full sm:w-auto"
               >
-                Join the Community
+                Join NodeX Today
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
@@ -76,10 +74,10 @@ export function HeroSection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-border text-muted-foreground hover:bg-muted px-8 py-3"
+                className="border-border text-muted-foreground hover:bg-muted px-8 py-3 transition-colors"
               >
                 <Github className="mr-2 w-4 h-4" />
-                Explore Projects
+                View Our Work
               </Button>
             </Link>
           </div>
@@ -93,7 +91,7 @@ export function HeroSection() {
               {orgLogos.map((org, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-center p-4 md:p-6 bg-card border border-border rounded-lg hover:shadow-md transition-all duration-300"
+                  className="flex items-center justify-center p-4 md:p-6 bg-card border border-border rounded-lg hover:shadow-md transition-shadow duration-300"
                 >
                   {/* Light mode image */}
                   <Image

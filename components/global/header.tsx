@@ -31,29 +31,18 @@ export function Header() {
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
-          {/* Left side - IUST and NodeX logos */}
-          <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 flex items-center justify-center">
+          {/* Left side - NodeX logo */}
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 dark:invert rounded-sm flex items-center justify-center">
               <Image
-                src="https://i.ibb.co/QFN6zx4T/iust-logo.png"
-                width={40}
-                height={40}
-                alt="IUST Logo"
-                className="object-contain"
+                src={"https://i.ibb.co/RpRrXLM8/node-Xblack.png"}
+                width={32}
+                height={32}
+                alt="NodeX Logo"
               />
             </div>
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 dark:invert rounded-sm flex items-center justify-center">
-                <Image
-                  src={"https://i.ibb.co/RpRrXLM8/node-Xblack.png"}
-                  width={32}
-                  height={32}
-                  alt="NodeX Logo"
-                />
-              </div>
-              <span className="text-xl font-bold">NodeX</span>
-            </Link>
-          </div>
+            <span className="text-xl font-bold">NodeX</span>
+          </Link>
 
           {/* Center - Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -72,14 +61,31 @@ export function Header() {
             ))}
           </div>
 
-          {/* Right - Theme Toggle */}
-          <div className="flex items-center">
+          {/* Right - IUST Logo and Theme Toggle (Desktop only) */}
+          <div className="hidden md:flex items-center space-x-4">
+            <div className="w-10 h-10 flex items-center justify-center">
+              <Image
+                src="https://i.ibb.co/QFN6zx4T/iust-logo.png"
+                width={40}
+                height={40}
+                alt="IUST Logo"
+                className="object-contain"
+              />
+            </div>
             <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
-            <ThemeToggle />
+            <div className="w-10 h-10 flex items-center justify-center">
+              <Image
+                src="https://i.ibb.co/QFN6zx4T/iust-logo.png"
+                width={40}
+                height={40}
+                alt="IUST Logo"
+                className="object-contain"
+              />
+            </div>
             <Button
               variant="ghost"
               size="sm"
@@ -113,6 +119,13 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
+              {/* Theme toggle in mobile menu */}
+              <div className="px-6 py-3 flex items-center justify-between">
+                <span className="text-sm font-medium text-muted-foreground">
+                  Theme
+                </span>
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         )}

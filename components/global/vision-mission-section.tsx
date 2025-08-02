@@ -21,7 +21,9 @@ export function VisionMissionSection() {
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
               <Eye className="w-8 h-8 mr-3 text-primary" />
-              <h3 className="text-2xl md:text-3xl font-bold">Our Vision</h3>
+              <h3 className="text-2xl md:text-3xl font-bold">
+                Vision Statement
+              </h3>
             </div>
             <div className="bg-card p-8 rounded-lg border border-border">
               <p className="text-lg text-muted-foreground leading-relaxed">
@@ -36,7 +38,9 @@ export function VisionMissionSection() {
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
               <Target className="w-8 h-8 mr-3 text-primary" />
-              <h3 className="text-2xl md:text-3xl font-bold">Our Mission</h3>
+              <h3 className="text-2xl md:text-3xl font-bold">
+                Mission Statement
+              </h3>
             </div>
             <div className="bg-card p-8 rounded-lg border border-border">
               <h4 className="text-xl font-semibold mb-4 text-primary">

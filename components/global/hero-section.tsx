@@ -5,6 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { cn } from "@/lib/utils";
 import { Github, ArrowRight } from "lucide-react";
 
 export function HeroSection() {
@@ -14,29 +20,64 @@ export function HeroSection() {
     setIsVisible(true);
   }, []);
 
+  // Custom TooltipContent without arrow
+  const TooltipContent = ({
+    className,
+    sideOffset = 0,
+    children,
+    ...props
+  }: React.ComponentProps<typeof TooltipPrimitive.Content>) => {
+    return (
+      <TooltipPrimitive.Portal>
+        <TooltipPrimitive.Content
+          sideOffset={sideOffset}
+          className={cn(
+            "bg-popover text-popover-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-3 py-1.5 text-xs text-balance border border-border shadow-lg",
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </TooltipPrimitive.Content>
+      </TooltipPrimitive.Portal>
+    );
+  };
+
   const orgLogos = [
     {
       name: "Raspberry Pi Foundation",
       url: "https://diversejobsmatter.co.uk/files/pictures/RPF_Logo_RGB.png",
       darkUrl:
         "https://diversejobsmatter.co.uk/files/pictures/RPF_Logo_RGB.png",
+      description:
+        "A UK-based charity that promotes the study of computer science and makes computing accessible for all through low-cost, high-performance computers.",
+      website: "https://www.raspberrypi.org",
     },
     {
       name: "The Linux Foundation",
       url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Linux_Foundation_logo_2013.svg/375px-Linux_Foundation_logo_2013.svg.png",
       darkUrl:
         "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Linux_Foundation_logo_2013.svg/375px-Linux_Foundation_logo_2013.svg.png",
+      description:
+        "A non-profit technology consortium that promotes, protects, and standardizes Linux and open source software development worldwide.",
+      website: "https://www.linuxfoundation.org",
     },
     {
       name: "JetBrains",
       url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/JetBrains_company_logo.svg/375px-JetBrains_company_logo.svg.png",
       darkUrl:
         "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/JetBrains_company_logo.svg/375px-JetBrains_company_logo.svg.png",
+      description:
+        "A leading software development company that creates professional development tools for coding, testing, and productivity enhancement.",
+      website: "https://www.jetbrains.com",
     },
     {
       name: "GitHub",
       url: "https://i.ibb.co/GfDDryyv/pngimg-com-github-PNG23.png",
       darkUrl: "https://i.ibb.co/GfDDryyv/pngimg-com-github-PNG23.png",
+      description:
+        "The world's largest code hosting platform that provides distributed version control and source code management functionality for software development.",
+      website: "https://github.com",
     },
   ];
 
@@ -89,38 +130,55 @@ export function HeroSection() {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
               {orgLogos.map((org, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-center p-4 md:p-6 bg-card border border-border rounded-lg hover:shadow-md transition-shadow duration-300"
-                >
-                  {/* Light mode image */}
-                  <Image
-                    src={org.url}
-                    width={150}
-                    height={50}
-                    alt={org.name}
-                    className="max-h-8 md:max-h-12 max-w-full object-contain transition-all duration-300 dark:hidden"
-                    onError={(e) => {
-                      const img = e.target as HTMLImageElement;
-                      img.style.display = "none";
-                    }}
-                  />
-                  {/* Dark mode image */}
-                  <Image
-                    src={org.darkUrl}
-                    width={150}
-                    height={50}
-                    alt={org.name}
-                    className="max-h-8 md:max-h-12 max-w-full object-contain transition-all duration-300 hidden dark:block dark:invert"
-                    onError={(e) => {
-                      const img = e.target as HTMLImageElement;
-                      img.style.display = "none";
-                    }}
-                  />
-                  <div className="text-sm font-medium text-muted-foreground hidden">
-                    {org.name}
-                  </div>
-                </div>
+                <Tooltip key={index}>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center justify-center p-4 md:p-6 bg-card border border-border rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
+                      {/* Light mode image */}
+                      <Image
+                        src={org.url}
+                        width={150}
+                        height={50}
+                        alt={org.name}
+                        className="max-h-8 md:max-h-12 max-w-full object-contain transition-all duration-300 dark:hidden"
+                        onError={(e) => {
+                          const img = e.target as HTMLImageElement;
+                          img.style.display = "none";
+                        }}
+                      />
+                      {/* Dark mode image */}
+                      <Image
+                        src={org.darkUrl}
+                        width={150}
+                        height={50}
+                        alt={org.name}
+                        className="max-h-8 md:max-h-12 max-w-full object-contain transition-all duration-300 hidden dark:block dark:invert"
+                        onError={(e) => {
+                          const img = e.target as HTMLImageElement;
+                          img.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    className="max-w-xs bg-popover text-popover-foreground border-border shadow-lg"
+                  >
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">{org.name}</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {org.description}
+                      </p>
+                      <Link 
+                        href={org.website} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-block text-xs text-blue-500 hover:text-blue-400 font-medium underline transition-colors"
+                      >
+                        {org.website}
+                      </Link>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
               ))}
             </div>
           </div>

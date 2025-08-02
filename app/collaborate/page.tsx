@@ -3,7 +3,6 @@
 import React, { useState, useRef } from "react";
 import { Header } from "../../components/global/header";
 import { Footer } from "../../components/global/footer";
-import { GallerySection } from "../../components/global/gallery-section";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -261,11 +260,8 @@ export default function CollaboratePage() {
               </form>
             </CardContent>
           </Card>
-        </div>{" "}
+        </div>
       </section>
-
-      {/* Gallery Section */}
-      <GallerySection />
 
       <Footer />
     </div>

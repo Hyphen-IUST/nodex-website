@@ -18,7 +18,7 @@ interface TeamMember {
   id: string;
   name: string;
   photo?: string;
-  category: "exec" | "direc" | "leads";
+  category: "founding" | "core" | "direc";
   title: string;
   qualification?: string;
   description?: string;
@@ -30,16 +30,17 @@ interface TeamMember {
 }
 
 interface TeamData {
-  exec: TeamMember[];
+  founding: TeamMember[];
+  core: TeamMember[];
   direc: TeamMember[];
-  leads: TeamMember[];
 }
 
 export default function TeamPage() {
   const [teamData, setTeamData] = useState<TeamData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("exec");
+  const [activeTab, setActiveTab] = useState("core");
+  const [activeSubTab, setActiveSubTab] = useState("founding");
   const { logActivity } = useActivityLogger({
     trackPageViews: true,
     trackClicks: true,
@@ -61,32 +62,6 @@ export default function TeamPage() {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getCategoryTitle = (category: string) => {
-    switch (category) {
-      case "direc":
-        return "Board of Students";
-      case "exec":
-        return "Core Committee";
-      case "leads":
-        return "Operations Team";
-      default:
-        return "";
-    }
-  };
-
-  const getCategoryDescription = (category: string) => {
-    switch (category) {
-      case "exec":
-        return "Leadership team responsible for strategic direction and overall management";
-      case "direc":
-        return "Student representatives providing mentorship and fostering community engagement";
-      case "leads":
-        return "Operations specialists overseeing key areas and day-to-day activities";
-      default:
-        return "";
     }
   };
 
@@ -416,8 +391,8 @@ export default function TeamPage() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-3 mb-8">
-                <TabsTrigger value="exec" className="flex items-center gap-2">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
+                <TabsTrigger value="core" className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   <span className="hidden sm:inline">Core Committee</span>
                   <span className="sm:hidden">Core</span>
@@ -427,48 +402,134 @@ export default function TeamPage() {
                   <span className="hidden sm:inline">Board of Students</span>
                   <span className="sm:hidden">BoS</span>
                 </TabsTrigger>
-                <TabsTrigger value="leads" className="flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  <span className="hidden sm:inline">Operations Team</span>
-                  <span className="sm:hidden">Ops</span>
-                </TabsTrigger>
               </TabsList>
 
-              {["exec", "direc", "leads"].map((category) => (
-                <TabsContent key={category} value={category} className="mt-0">
-                  <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4">
-                      {getCategoryTitle(category)}
-                    </h2>
-                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                      {getCategoryDescription(category)}
-                    </p>
-                  </div>
+              {/* Core Committee Tab with Sub-tabs */}
+              <TabsContent value="core" className="mt-0">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold mb-4">Core Committee</h2>
+                </div>
 
-                  {teamData[category as keyof TeamData] &&
-                  teamData[category as keyof TeamData].length > 0 ? (
-                    <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-                      {teamData[category as keyof TeamData].map((member) => (
-                        <div
-                          key={member.id}
-                          className="w-full max-w-xs sm:max-w-[280px] flex-shrink-0"
-                        >
-                          <TeamMemberCard
-                            member={member}
-                            onActivity={logActivity}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground text-lg">
-                        No team members in this category yet.
+                <Tabs
+                  value={activeSubTab}
+                  onValueChange={setActiveSubTab}
+                  className="w-full"
+                >
+                  <TabsList className="grid w-full grid-cols-2 mb-8 max-w-md mx-auto">
+                    <TabsTrigger
+                      value="founding"
+                      className="flex items-center gap-2"
+                    >
+                      <Award className="w-4 h-4" />
+                      <span>Founding Team</span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="core"
+                      className="flex items-center gap-2"
+                    >
+                      <Users className="w-4 h-4" />
+                      <span>Core Members</span>
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="founding" className="mt-0">
+                    <div className="text-center mb-8">
+                      <h3 className="text-2xl font-bold mb-4">Founding Team</h3>
+                      <p className="text-muted-foreground max-w-2xl mx-auto">
+                        Leadership team responsible for strategic direction and
+                        overall management of NodeX
                       </p>
                     </div>
-                  )}
-                </TabsContent>
-              ))}
+
+                    {teamData?.founding && teamData.founding.length > 0 ? (
+                      <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+                        {teamData.founding.map((member) => (
+                          <div
+                            key={member.id}
+                            className="w-full max-w-xs sm:max-w-[280px] flex-shrink-0"
+                          >
+                            <TeamMemberCard
+                              member={member}
+                              onActivity={logActivity}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <p className="text-muted-foreground text-lg">
+                          No founding team members yet.
+                        </p>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="core" className="mt-0">
+                    <div className="text-center mb-8">
+                      <h3 className="text-2xl font-bold mb-4">Core Members</h3>
+                      <p className="text-muted-foreground max-w-2xl mx-auto">
+                        Operations team responsible for day-to-day activities
+                        and project execution
+                      </p>
+                    </div>
+
+                    {teamData?.core && teamData.core.length > 0 ? (
+                      <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+                        {teamData.core.map((member) => (
+                          <div
+                            key={member.id}
+                            className="w-full max-w-xs sm:max-w-[280px] flex-shrink-0"
+                          >
+                            <TeamMemberCard
+                              member={member}
+                              onActivity={logActivity}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <p className="text-muted-foreground text-lg">
+                          No core members yet.
+                        </p>
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
+              </TabsContent>
+
+              {/* Board of Students Tab */}
+              <TabsContent value="direc" className="mt-0">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-bold mb-4">Board of Students</h2>
+                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    Student representatives providing mentorship and fostering
+                    community engagement
+                  </p>
+                </div>
+
+                {teamData?.direc && teamData.direc.length > 0 ? (
+                  <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+                    {teamData.direc.map((member) => (
+                      <div
+                        key={member.id}
+                        className="w-full max-w-xs sm:max-w-[280px] flex-shrink-0"
+                      >
+                        <TeamMemberCard
+                          member={member}
+                          onActivity={logActivity}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground text-lg">
+                      No board members yet.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
             </Tabs>
           )}
         </div>

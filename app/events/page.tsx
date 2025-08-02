@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "../../components/global/header";
 import { Footer } from "../../components/global/footer";
+import { GallerySection } from "../../components/global/gallery-section";
 import { Calendar, Clock } from "lucide-react";
 import {
   Card,
@@ -236,6 +237,9 @@ export default function EventsPage() {
           )}
         </div>
       </div>
+
+      {/* Gallery Section */}
+      <GallerySection />
 
       <Footer />
     </div>

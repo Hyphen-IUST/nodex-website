@@ -29,7 +29,7 @@ interface Resource {
   title: string;
   description: string;
   category: string;
-  url?: string;
+  link?: string;
   file_url?: string;
   type: string;
   tags?: string[];
@@ -109,8 +109,8 @@ export default function CategoryPage() {
   };
 
   const handleResourceClick = (resource: Resource) => {
-    if (resource.url) {
-      window.open(resource.url, "_blank");
+    if (resource.link) {
+      window.open(resource.link, "_blank");
     } else if (resource.file_url) {
       window.open(resource.file_url, "_blank");
     }

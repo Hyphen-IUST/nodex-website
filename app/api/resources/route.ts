@@ -56,7 +56,7 @@ export async function GET() {
       categories.map(async (category: ResourceCategory) => {
         try {
           const resourceCountResponse = await fetch(
-            `${pocketbaseUrl}/api/collections/resources/records?filter=category="${category.id}"&perPage=1`,
+            `${pocketbaseUrl}/api/collections/nodex_resources/records?filter=category="${category.id}"&perPage=1`,
             {
               method: "GET",
               headers: {

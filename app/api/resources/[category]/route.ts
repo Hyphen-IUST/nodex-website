@@ -37,7 +37,7 @@ export async function GET(
 
     // Fetch resources from PocketBase
     const resourcesResponse = await fetch(
-      `${pocketbaseUrl}/api/collections/resources/records?filter=${encodeURIComponent(
+      `${pocketbaseUrl}/api/collections/nodex_resources/records?filter=${encodeURIComponent(
         filter
       )}&sort=-created&page=${page}&perPage=${perPage}&expand=category`,
       {

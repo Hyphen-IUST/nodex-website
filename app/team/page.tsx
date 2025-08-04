@@ -154,7 +154,7 @@ export default function TeamPage() {
             {member.qualification && (
               <div className="p-3 bg-muted/50 rounded-md border border-border/50">
                 <h4 className="text-sm font-semibold mb-2 text-foreground">
-                  Qualification
+                  Profile
                 </h4>
                 <RichTextRenderer
                   content={getDisplayText(

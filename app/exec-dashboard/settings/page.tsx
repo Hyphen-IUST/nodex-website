@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { PageLoading } from "@/components/ui/page-loading";
 import { useToast } from "@/hooks/use-toast";
+import { useActivityLogger } from "@/hooks/useExecActivityLogger";
 import {
   Globe,
   UserPlus,
@@ -37,6 +38,7 @@ interface Recruiter {
 export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { logActivity } = useActivityLogger();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [recruiter, setRecruiter] = useState<Recruiter | null>(null);
   const [loading, setLoading] = useState(true);
@@ -125,6 +127,15 @@ export default function SettingsPage() {
 
         const settingLabel =
           setting === "maintenance" ? "maintenance mode" : "BOS applications";
+        
+        // Log the activity
+        await logActivity({
+          action: `Update ${setting === "maintenance" ? "Maintenance Mode" : "BOS Applications"}`,
+          resource_type: "site_settings",
+          resource_id: "web_metadata",
+          details: `${settingLabel} ${newValue ? "enabled" : "disabled"}`,
+        });
+
         toast({
           title: "Settings Updated",
           description: `${settingLabel} ${

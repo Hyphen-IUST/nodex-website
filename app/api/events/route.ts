@@ -16,7 +16,7 @@ interface Event {
 
 export async function GET() {
   try {
-    const pocketbaseUrl = process.env.POCKETBASE_URL;
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
 
     if (!pocketbaseUrl) {
       return NextResponse.json(

@@ -1,49 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 
-interface BOSOnboardingData {
-  // Personal Information
-  name: string;
-  email: string;
-  phone: string;
-  rollNumber: string;
-  department: string;
-  year: string;
-
-  // Profile Information
-  bio: string;
-  skills: string;
-  achievements?: string;
-  interests: string;
-
-  // Social Links
-  github?: string;
-  linkedin?: string;
-  portfolio?: string;
-
-  // Additional Information
-  experience: string;
-  goals: string;
-  opportunities: string;
-  availability: string[];
-
-  // Preferences
-  communication_preference: string;
-  newsletter: boolean;
-  events_notification: boolean;
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const data: BOSOnboardingData = await request.json();
+    const formData = await request.formData();
+
+    // Extract form fields
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      rollNumber: formData.get("rollNumber") as string,
+      department: formData.get("department") as string,
+      year: formData.get("year") as string,
+      photo: formData.get("photo") as File,
+      bio: formData.get("bio") as string,
+      skills: formData.get("skills") as string,
+      achievements: formData.get("achievements") as string,
+      interests: formData.get("interests") as string,
+      github: formData.get("github") as string,
+      linkedin: formData.get("linkedin") as string,
+      portfolio: formData.get("portfolio") as string,
+      experience: formData.get("experience") as string,
+      goals: formData.get("goals") as string,
+      opportunities: formData.get("opportunities") as string,
+      availability: JSON.parse(
+        formData.get("availability") as string
+      ) as string[],
+      communication_preference: formData.get(
+        "communication_preference"
+      ) as string,
+      newsletter: formData.get("newsletter") === "true",
+      events_notification: formData.get("events_notification") === "true",
+    };
 
     // Validate required fields
-    const requiredFields: (keyof BOSOnboardingData)[] = [
+    const requiredFields: (keyof typeof data)[] = [
       "name",
       "email",
       "phone",
       "rollNumber",
       "department",
       "year",
+      "photo",
       "bio",
       "skills",
       "interests",
@@ -62,6 +60,30 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
+    }
+
+    // Validate photo file
+    if (!data.photo || data.photo.size === 0) {
+      return NextResponse.json(
+        { message: "Professional headshot is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate file type and size
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!allowedTypes.includes(data.photo.type)) {
+      return NextResponse.json(
+        { message: "Only JPEG and PNG images are allowed" },
+        { status: 400 }
+      );
+    }
+
+    if (data.photo.size > 5 * 1024 * 1024) {
+      return NextResponse.json(
+        { message: "File size must be less than 5MB" },
+        { status: 400 }
+      );
     }
 
     // Validate email format
@@ -83,41 +105,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Prepare data for PocketBase
-    const pbData = {
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      roll_number: data.rollNumber,
-      department: data.department,
-      year: data.year,
-      bio: data.bio,
-      skills: data.skills,
-      achievements: data.achievements || "",
-      interests: data.interests,
-      github: data.github || "",
-      linkedin: data.linkedin || "",
-      portfolio: data.portfolio || "",
-      experience: data.experience,
-      goals: data.goals,
-      opportunities: data.opportunities,
-      availability: data.availability.join(", "), // Convert array to comma-separated string
-      communication_preference: data.communication_preference,
-      newsletter: data.newsletter,
-      events_notification: data.events_notification,
-      status: "pending", // Default status for new onboarding submissions
-      onboarded_date: new Date().toISOString(),
-    };
+    // Prepare FormData for PocketBase (to handle file upload)
+    const pbFormData = new FormData();
 
+    // Add all text fields
+    pbFormData.append("name", data.name);
+    pbFormData.append("email", data.email);
+    pbFormData.append("phone", data.phone);
+    pbFormData.append("roll_number", data.rollNumber);
+    pbFormData.append("department", data.department);
+    pbFormData.append("year", data.year);
+    pbFormData.append("bio", data.bio);
+    pbFormData.append("skills", data.skills);
+    pbFormData.append("achievements", data.achievements || "");
+    pbFormData.append("interests", data.interests);
+    pbFormData.append("github", data.github || "");
+    pbFormData.append("linkedin", data.linkedin || "");
+    pbFormData.append("portfolio", data.portfolio || "");
+    pbFormData.append("experience", data.experience);
+    pbFormData.append("goals", data.goals);
+    pbFormData.append("opportunities", data.opportunities);
+    pbFormData.append("availability", data.availability.join(", "));
+    pbFormData.append(
+      "communication_preference",
+      data.communication_preference
+    );
+    pbFormData.append("newsletter", data.newsletter.toString());
+    pbFormData.append(
+      "events_notification",
+      data.events_notification.toString()
+    );
+    pbFormData.append("status", "pending");
+    pbFormData.append("onboarded_date", new Date().toISOString());
+
+    // Add the photo file
+    pbFormData.append("photo", data.photo);
     // Submit to PocketBase
     const response = await fetch(
       `${pocketbaseUrl}/api/collections/nodex_bos/records`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(pbData),
+        body: pbFormData, // Send FormData instead of JSON
       }
     );
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Image from "next/image";
 import { Header } from "@/components/global/header";
 import { Footer } from "@/components/global/footer";
 import { BOSNotAcceptingPage } from "@/components/global/bos-not-accepting";
@@ -32,6 +33,8 @@ import {
   Loader2,
   UserPlus,
   Sparkles,
+  Upload,
+  X,
 } from "lucide-react";
 import { PageLoading } from "@/components/ui/page-loading";
 
@@ -43,6 +46,17 @@ const onboardingSchema = z.object({
   rollNumber: z.string().min(1, "Roll number is required"),
   department: z.string().min(1, "Department is required"),
   year: z.string().min(1, "Year is required"),
+  photo: z
+    .instanceof(File)
+    .refine((file) => file.size > 0, "Professional headshot is required")
+    .refine(
+      (file) => file.size <= 5 * 1024 * 1024,
+      "File size must be less than 5MB"
+    )
+    .refine(
+      (file) => ["image/jpeg", "image/jpg", "image/png"].includes(file.type),
+      "Only JPEG and PNG images are allowed"
+    ),
 
   // Profile Information
   bio: z.string().min(50, "Bio must be at least 50 characters"),
@@ -84,6 +98,8 @@ export default function BOSOnboardingPage() {
   const [acceptingStatus, setAcceptingStatus] = useState<
     "accepting" | "not-accepting"
   >("accepting");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const { toast } = useToast();
 
   const {
@@ -129,15 +145,51 @@ export default function BOSOnboardingPage() {
     }
   };
 
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedPhoto(file);
+      setValue("photo", file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPhotoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setSelectedPhoto(null);
+    setPhotoPreview(null);
+    // Reset the input
+    const photoInput = document.getElementById("photo") as HTMLInputElement;
+    if (photoInput) {
+      photoInput.value = "";
+    }
+  };
+
   const onSubmit = async (data: OnboardingFormData) => {
     setIsSubmitting(true);
     try {
+      // Create FormData to handle file upload
+      const formData = new FormData();
+
+      // Add all form fields
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "photo") {
+          formData.append("photo", value as File);
+        } else if (key === "availability") {
+          formData.append("availability", JSON.stringify(value));
+        } else {
+          formData.append(key, value as string);
+        }
+      });
+
       const response = await fetch("/api/bos-onboarding", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        body: formData, // Send FormData instead of JSON
       });
 
       const result = await response.json();
@@ -150,6 +202,9 @@ export default function BOSOnboardingPage() {
             "Your onboarding form has been submitted successfully. We're excited to have you on the team!",
         });
         reset();
+        // Clear photo states
+        setSelectedPhoto(null);
+        setPhotoPreview(null);
       } else {
         toast({
           title: "Submission Failed",
@@ -216,12 +271,12 @@ export default function BOSOnboardingPage() {
               <h1 className="text-4xl font-bold mb-4">Welcome Aboard! 🎉</h1>
               <p className="text-xl text-muted-foreground mb-6">
                 Thank you for completing your Board of Students onboarding.
-                You&apos;re now officially part of our leadership team!
+                You&apos;re now officially part of our advisory team!
               </p>
               <div className="flex justify-center gap-2 mb-8">
                 <Badge variant="secondary" className="px-4 py-2">
                   <Star className="w-4 h-4 mr-2" />
-                  Leadership Member
+                  Advisory Member
                 </Badge>
                 <Badge variant="secondary" className="px-4 py-2">
                   <Trophy className="w-4 h-4 mr-2" />
@@ -229,7 +284,7 @@ export default function BOSOnboardingPage() {
                 </Badge>
               </div>
               <p className="text-muted-foreground mb-8">
-                You&apos;ll receive further instructions about leadership access
+                You&apos;ll receive further instructions about dashboard access
                 and strategic planning sessions via email within the next 24
                 hours. Get ready to drive innovation and create opportunities
                 with NodeX!
@@ -397,6 +452,110 @@ export default function BOSOnboardingPage() {
                         </p>
                       )}
                     </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Professional Photo */}
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold">Professional Photo</h3>
+                  <div>
+                    <Label htmlFor="photo">Professional Headshot *</Label>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Upload a professional headshot for your team profile.
+                      Maximum file size: 5MB. Accepted formats: JPEG, PNG.
+                    </p>
+
+                    {!photoPreview ? (
+                      <div className="relative border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
+                        <Input
+                          id="photo"
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png"
+                          onChange={handlePhotoChange}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <div className="flex flex-col items-center gap-4 pointer-events-none">
+                          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+                            <Upload className="w-8 h-8 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium mb-1">
+                              Click to upload or drag and drop
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              JPEG or PNG up to 5MB
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <div className="border border-border rounded-lg p-4">
+                          <div className="flex items-start gap-4">
+                            <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-muted">
+                              <Image
+                                src={photoPreview}
+                                alt="Photo preview"
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-medium">
+                                {selectedPhoto?.name}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {selectedPhoto &&
+                                  (selectedPhoto.size / 1024 / 1024).toFixed(
+                                    2
+                                  )}{" "}
+                                MB
+                              </p>
+                              <div className="flex gap-2 mt-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    const input = document.getElementById(
+                                      "photo"
+                                    ) as HTMLInputElement;
+                                    input?.click();
+                                  }}
+                                >
+                                  <Upload className="w-4 h-4 mr-2" />
+                                  Replace
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={removePhoto}
+                                >
+                                  <X className="w-4 h-4 mr-2" />
+                                  Remove
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <Input
+                          id="photo"
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png"
+                          onChange={handlePhotoChange}
+                          className="hidden"
+                        />
+                      </div>
+                    )}
+
+                    {errors.photo && (
+                      <p className="text-sm text-red-500 mt-2">
+                        {errors.photo.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 

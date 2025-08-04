@@ -5,9 +5,10 @@ const pb = new PocketBase(process.env.POCKETBASE_URL);
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     // Authenticate with admin credentials
     await pb.admins.authWithPassword(
       process.env.POCKETBASE_ADMIN_EMAIL!,
@@ -49,9 +50,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     // Authenticate with admin credentials
     await pb.admins.authWithPassword(
       process.env.POCKETBASE_ADMIN_EMAIL!,

@@ -3,9 +3,10 @@ import { cookies } from "next/headers";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const cookieStore = await cookies();
     const authKey = cookieStore.get("auth-key")?.value;
 
@@ -96,9 +97,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const cookieStore = await cookies();
     const authKey = cookieStore.get("auth-key")?.value;
 

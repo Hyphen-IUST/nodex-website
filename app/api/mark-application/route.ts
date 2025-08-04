@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify recruiter authentication
-    const pocketbaseUrl = process.env.POCKETBASE_URL;
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
     const recruiterResponse = await fetch(
       `${pocketbaseUrl}/api/collections/recruiters/records?filter=(auth_key="${authKey}")`,
       {

@@ -127,10 +127,12 @@ export default function SettingsPage() {
 
         const settingLabel =
           setting === "maintenance" ? "maintenance mode" : "BOS applications";
-        
+
         // Log the activity
         await logActivity({
-          action: `Update ${setting === "maintenance" ? "Maintenance Mode" : "BOS Applications"}`,
+          action: `Update ${
+            setting === "maintenance" ? "Maintenance Mode" : "BOS Applications"
+          }`,
           resource_type: "site_settings",
           resource_id: "web_metadata",
           details: `${settingLabel} ${newValue ? "enabled" : "disabled"}`,

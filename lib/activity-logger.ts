@@ -58,7 +58,7 @@ export async function logActivity(
     };
 
     const response = await fetch(
-      `${process.env.POCKETBASE_URL}/api/collections/activity_log/records`,
+      `${process.env.POCKETBASE_BACKEND_URL}/api/collections/activity_log/records`,
       {
         method: "POST",
         headers: {

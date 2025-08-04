@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
-
-const pb = new PocketBase(process.env.POCKETBASE_URL);
 
 export async function PUT(
   request: NextRequest,
@@ -9,11 +6,7 @@ export async function PUT(
 ) {
   try {
     const params = await context.params;
-    // Authenticate with admin credentials
-    await pb.admins.authWithPassword(
-      process.env.POCKETBASE_ADMIN_EMAIL!,
-      process.env.POCKETBASE_ADMIN_PASSWORD!
-    );
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
 
     const data = await request.json();
     const { id } = params;
@@ -27,12 +20,27 @@ export async function PUT(
     }
 
     // Update category
-    const category = await pb.collection("resource_categories").update(id, {
-      name: data.name,
-      description: data.description,
-      slug: data.slug,
-      icon: data.icon || "",
-    });
+    const response = await fetch(
+      `${pocketbaseUrl}/api/collections/resource_categories/records/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+          description: data.description,
+          slug: data.slug,
+          icon: data.icon || "",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update category");
+    }
+
+    const category = await response.json();
 
     return NextResponse.json({
       success: true,
@@ -54,33 +62,47 @@ export async function DELETE(
 ) {
   try {
     const params = await context.params;
-    // Authenticate with admin credentials
-    await pb.admins.authWithPassword(
-      process.env.POCKETBASE_ADMIN_EMAIL!,
-      process.env.POCKETBASE_ADMIN_PASSWORD!
-    );
-
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
     const { id } = params;
 
     // Check if category is being used by any resources
-    const resourcesUsingCategory = await pb
-      .collection("resources")
-      .getList(1, 1, {
-        filter: `category = "${id}"`,
-      });
-
-    if (resourcesUsingCategory.totalItems > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: `Cannot delete category. It is being used by ${resourcesUsingCategory.totalItems} resource(s).`,
+    const resourcesResponse = await fetch(
+      `${pocketbaseUrl}/api/collections/resources/records?filter=(category="${id}")&page=1&perPage=1`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
         },
-        { status: 400 }
-      );
+      }
+    );
+
+    if (resourcesResponse.ok) {
+      const resourcesData = await resourcesResponse.json();
+      if (resourcesData.totalItems > 0) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: `Cannot delete category. It is being used by ${resourcesData.totalItems} resource(s).`,
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // Delete category
-    await pb.collection("resource_categories").delete(id);
+    const deleteResponse = await fetch(
+      `${pocketbaseUrl}/api/collections/resource_categories/records/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!deleteResponse.ok) {
+      throw new Error("Failed to delete category");
+    }
 
     return NextResponse.json({
       success: true,

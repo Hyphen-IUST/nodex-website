@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import PocketBase from "pocketbase";
 
 const loginSchema = z.object({
   authKey: z.string().min(1, "Auth key is required"),
@@ -9,20 +8,25 @@ const loginSchema = z.object({
 // Activity logging function
 async function logActivity(recruiterId: string, details: string) {
   try {
-    const pb = new PocketBase(process.env.POCKETBASE_URL);
-    await pb.admins.authWithPassword(
-      process.env.POCKETBASE_ADMIN_EMAIL!,
-      process.env.POCKETBASE_ADMIN_PASSWORD!
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
+    
+    await fetch(
+      `${pocketbaseUrl}/api/collections/exec_activity/records`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recruiter: recruiterId,
+          action: "Login",
+          resource_type: "authentication",
+          resource_id: recruiterId,
+          details: details,
+          timestamp: new Date().toISOString(),
+        }),
+      }
     );
-
-    await pb.collection("exec_activity").create({
-      recruiter: recruiterId,
-      action: "Login",
-      resource_type: "authentication",
-      resource_id: recruiterId,
-      details: details,
-      timestamp: new Date().toISOString(),
-    });
   } catch (error) {
     console.error("Failed to log activity:", error);
     // Don't throw error to avoid breaking the login flow
@@ -32,23 +36,28 @@ async function logActivity(recruiterId: string, details: string) {
 // Function to log failed login attempts
 async function logFailedLogin(authKey: string) {
   try {
-    const pb = new PocketBase(process.env.POCKETBASE_URL);
-    await pb.admins.authWithPassword(
-      process.env.POCKETBASE_ADMIN_EMAIL!,
-      process.env.POCKETBASE_ADMIN_PASSWORD!
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
+    
+    await fetch(
+      `${pocketbaseUrl}/api/collections/exec_activity/records`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recruiter: null, // No recruiter ID for failed attempts
+          action: "Failed Login",
+          resource_type: "authentication",
+          resource_id: null,
+          details: `Failed login attempt with auth key: ${authKey.substring(
+            0,
+            8
+          )}...`,
+          timestamp: new Date().toISOString(),
+        }),
+      }
     );
-
-    await pb.collection("exec_activity").create({
-      recruiter: null, // No recruiter ID for failed attempts
-      action: "Failed Login",
-      resource_type: "authentication",
-      resource_id: null,
-      details: `Failed login attempt with auth key: ${authKey.substring(
-        0,
-        8
-      )}...`,
-      timestamp: new Date().toISOString(),
-    });
   } catch (error) {
     console.error("Failed to log failed login activity:", error);
   }

@@ -1,20 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
-
-const pb = new PocketBase(process.env.POCKETBASE_URL);
 
 export async function GET() {
   try {
-    // Authenticate with admin credentials
-    await pb.admins.authWithPassword(
-      process.env.POCKETBASE_ADMIN_EMAIL!,
-      process.env.POCKETBASE_ADMIN_PASSWORD!
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
+
+    const response = await fetch(
+      `${pocketbaseUrl}/api/collections/resource_categories/records?sort=name`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
 
-    // Fetch all resource categories
-    const categories = await pb.collection("resource_categories").getFullList({
-      sort: "name",
-    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch categories");
+    }
+
+    const data = await response.json();
+    const categories = data.items;
 
     return NextResponse.json({
       success: true,
@@ -31,12 +36,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Authenticate with admin credentials
-    await pb.admins.authWithPassword(
-      process.env.POCKETBASE_ADMIN_EMAIL!,
-      process.env.POCKETBASE_ADMIN_PASSWORD!
-    );
-
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
     const data = await request.json();
 
     // Validate required fields
@@ -48,12 +48,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new category
-    const category = await pb.collection("resource_categories").create({
-      name: data.name,
-      description: data.description,
-      slug: data.slug,
-      icon: data.icon || "",
-    });
+    const response = await fetch(
+      `${pocketbaseUrl}/api/collections/resource_categories/records`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+          description: data.description,
+          slug: data.slug,
+          icon: data.icon || "",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to create category");
+    }
+
+    const category = await response.json();
 
     return NextResponse.json({
       success: true,

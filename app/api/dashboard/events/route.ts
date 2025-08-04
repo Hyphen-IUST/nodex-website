@@ -125,6 +125,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Format dates for PocketBase (convert datetime-local to proper format)
+    const formatDateForPocketBase = (dateString: string) => {
+      if (!dateString) return "";
+      try {
+        // Parse the datetime-local format and convert to PocketBase format
+        const date = new Date(dateString);
+        // PocketBase expects format: "2025-08-04 17:30:00.000Z"
+        return date.toISOString().slice(0, 19).replace("T", " ") + ".000Z";
+      } catch (error) {
+        console.error("Date formatting error:", error);
+        return "";
+      }
+    };
+
     // Create event in PocketBase
     const createResponse = await fetch(
       `${pocketbaseUrl}/api/collections/nodex_events/records`,
@@ -136,8 +150,8 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           title,
           description,
-          from,
-          to,
+          from: formatDateForPocketBase(from),
+          to: formatDateForPocketBase(to),
           location,
           category: category || "",
           remSpots: remSpots || 0,

@@ -182,11 +182,26 @@ export default function EventsManagement() {
 
   const handleEditEvent = (event: Event) => {
     setEditingEvent(event);
+
+    // Convert PocketBase date format to datetime-local input format
+    const formatDateForInput = (dateString: string) => {
+      if (!dateString) return "";
+      try {
+        // Handle different potential date formats from PocketBase
+        const date = new Date(dateString);
+        // Convert to YYYY-MM-DDTHH:MM format for datetime-local input
+        return date.toISOString().slice(0, 16);
+      } catch (error) {
+        console.error("Date conversion error:", error);
+        return "";
+      }
+    };
+
     setFormData({
       title: event.title,
       description: event.description,
-      from: event.from,
-      to: event.to,
+      from: formatDateForInput(event.from),
+      to: formatDateForInput(event.to),
       location: event.location,
       category: event.category,
       remSpots: event.remSpots || 0,

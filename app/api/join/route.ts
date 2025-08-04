@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if IP is blocked
-    const pocketbaseUrl = process.env.POCKETBASE_URL;
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
     const ipCheckResponse = await fetch(
       `${pocketbaseUrl}/api/collections/blocked_ips/records?filter=(ip='${ipAddress}')`,
       {

@@ -14,7 +14,7 @@ export async function GET() {
     }
 
     // Check if auth key exists in PocketBase recruiters collection
-    const pocketbaseUrl = process.env.POCKETBASE_URL;
+    const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
     const response = await fetch(
       `${pocketbaseUrl}/api/collections/recruiters/records?filter=(auth_key="${authKey}")`,
       {

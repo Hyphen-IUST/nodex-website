@@ -442,12 +442,9 @@ export default function TeamPage() {
                     </div>
 
                     {teamData?.founding && teamData.founding.length > 0 ? (
-                      <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-6xl mx-auto justify-items-center">
                         {teamData.founding.map((member) => (
-                          <div
-                            key={member.id}
-                            className="w-full max-w-xs sm:max-w-[280px] flex-shrink-0"
-                          >
+                          <div key={member.id} className="w-full max-w-[280px]">
                             <TeamMemberCard
                               member={member}
                               onActivity={logActivity}
@@ -474,12 +471,9 @@ export default function TeamPage() {
                     </div>
 
                     {teamData?.core && teamData.core.length > 0 ? (
-                      <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-6xl mx-auto justify-items-center">
                         {teamData.core.map((member) => (
-                          <div
-                            key={member.id}
-                            className="w-full max-w-xs sm:max-w-[280px] flex-shrink-0"
-                          >
+                          <div key={member.id} className="w-full max-w-[280px]">
                             <TeamMemberCard
                               member={member}
                               onActivity={logActivity}
@@ -509,12 +503,9 @@ export default function TeamPage() {
                 </div>
 
                 {teamData?.direc && teamData.direc.length > 0 ? (
-                  <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-6xl mx-auto justify-items-center">
                     {teamData.direc.map((member) => (
-                      <div
-                        key={member.id}
-                        className="w-full max-w-xs sm:max-w-[280px] flex-shrink-0"
-                      >
+                      <div key={member.id} className="w-full max-w-[280px]">
                         <TeamMemberCard
                           member={member}
                           onActivity={logActivity}

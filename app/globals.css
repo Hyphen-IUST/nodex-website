@@ -103,3 +103,303 @@
 body {
   @apply bg-background text-foreground;
 }
+
+/* Glassmorphism effect */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.glassmorphism:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Blur Card Component */
+.blur-card {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  transition: 0.3s ease;
+}
+
+.blur-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50px;
+  width: 50%;
+  height: 100%;
+  background: #fff;
+  border-radius: 8px;
+  transform: skewX(15deg);
+  transition: 0.5s;
+}
+
+.blur-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50px;
+  width: 50%;
+  height: 100%;
+  background: #fff;
+  border-radius: 8px;
+  transform: skewX(15deg);
+  transition: 0.5s;
+  filter: blur(30px);
+}
+
+.blur-card:hover::before,
+.blur-card:hover::after {
+  transform: skewX(0deg);
+  left: 20px;
+  width: calc(100% - 90px);
+}
+
+.blur-card-gradient1::before,
+.blur-card-gradient1::after {
+  background: linear-gradient(315deg, #ffbc00, #ff0058);
+}
+
+.blur-card-gradient2::before,
+.blur-card-gradient2::after {
+  background: linear-gradient(315deg, #03a9f4, #ff0058);
+}
+
+.blur-card-gradient3::before,
+.blur-card-gradient3::after {
+  background: linear-gradient(315deg, #4dff03, #00d0ff);
+}
+
+.blur-card-minimal::before,
+.blur-card-minimal::after {
+  display: none;
+}
+
+.blur-card-minimal-gradient::before,
+.blur-card-minimal-gradient::after {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.1),
+    rgba(168, 85, 247, 0.1)
+  );
+  opacity: 0.4;
+}
+
+.blur-card-minimal-gradient .blur-card-content {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.04)
+  );
+}
+
+.dark .blur-card-minimal-gradient .blur-card-content {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+.dark .blur-card-minimal-gradient::before,
+.dark .blur-card-minimal-gradient::after {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.15),
+    rgba(168, 85, 247, 0.15)
+  );
+  opacity: 0.3;
+}
+
+.blur-card span {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.blur-card span::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: 0.3s ease;
+  animation: blur-animate 2s ease-in-out infinite;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.blur-card:hover span::before {
+  opacity: 1;
+  top: -30px;
+  right: -30px;
+  width: 60px;
+  height: 60px;
+}
+
+.blur-card span::after {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: 0.3s ease;
+  animation: blur-animate 2s ease-in-out infinite;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  animation-delay: -1s;
+}
+
+.blur-card:hover span::after {
+  opacity: 1;
+  bottom: -30px;
+  left: -30px;
+  width: 60px;
+  height: 60px;
+}
+
+@keyframes blur-animate {
+  0%,
+  100% {
+    transform: translateY(10px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.blur-card-content {
+  position: relative;
+  left: 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 10;
+  transition: 0.3s ease;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+.blur-card:hover .blur-card-content {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+/* For minimal variant - better sizing for different use cases */
+.blur-card-minimal {
+  width: 100%;
+  max-width: 280px;
+  min-height: 250px;
+  margin: 0;
+}
+
+.blur-card-minimal .blur-card-content {
+  min-height: 180px;
+  padding: 15px;
+}
+
+/* For organization logos - smaller sizing */
+.blur-card-minimal-gradient.cursor-pointer {
+  width: 200px;
+  height: 120px;
+  margin: 0;
+}
+
+.blur-card-minimal-gradient.cursor-pointer .blur-card-content {
+  min-height: 80px;
+  padding: 10px 15px;
+}
+
+.blur-card-minimal span {
+  display: none;
+}
+
+.blur-card-minimal-gradient span {
+  display: block;
+}
+
+/* Smaller parallelograms for organization logos */
+.blur-card-minimal-gradient.cursor-pointer::before,
+.blur-card-minimal-gradient.cursor-pointer::after {
+  width: 30%;
+  height: 60%;
+  opacity: 0.2;
+  left: 60px;
+}
+
+.blur-card-minimal-gradient.cursor-pointer:hover::before,
+.blur-card-minimal-gradient.cursor-pointer:hover::after {
+  left: 40px;
+  width: calc(100% - 80px);
+  height: 80%;
+}
+
+/* Smaller hover blur effects for organization cards */
+.blur-card-minimal-gradient.cursor-pointer span::before {
+  width: 25px;
+  height: 25px;
+  top: -15px;
+  right: -15px;
+}
+
+.blur-card-minimal-gradient.cursor-pointer:hover span::before {
+  width: 35px;
+  height: 35px;
+  top: -20px;
+  right: -20px;
+}
+
+.blur-card-minimal-gradient.cursor-pointer span::after {
+  width: 25px;
+  height: 25px;
+  bottom: -15px;
+  left: -15px;
+}
+
+.blur-card-minimal-gradient.cursor-pointer:hover span::after {
+  width: 35px;
+  height: 35px;
+  bottom: -20px;
+  left: -20px;
+}
+
+/* Theme-aware text colors */
+.blur-card-content {
+  color: hsl(var(--foreground));
+}
+
+.blur-card-content h3 {
+  color: hsl(var(--foreground));
+}
+
+.blur-card-content p {
+  color: hsl(var(--muted-foreground));
+}

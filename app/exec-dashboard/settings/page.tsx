@@ -184,6 +184,25 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-6">
+          {/* Warning Notice */}
+          <Card className="border-orange-200 dark:border-orange-800">
+            <CardContent className="pt-3">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-orange-500 mt-0.5" />
+                <div>
+                  <h3 className="font-medium text-orange-700 dark:text-orange-300">
+                    Important Notice
+                  </h3>
+                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
+                    Changes to these settings affect the entire website
+                    immediately. Maintenance mode will prevent all visitors from
+                    accessing the site, so use it carefully during updates or
+                    maintenance.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           {/* Site Maintenance */}
           <Card>
             <CardHeader>
@@ -336,26 +355,6 @@ export default function SettingsPage() {
                       ? new Date(metadata.updated).toLocaleString()
                       : "Never"}
                   </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Warning Notice */}
-          <Card className="border-orange-200 dark:border-orange-800">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-orange-500 mt-0.5" />
-                <div>
-                  <h3 className="font-medium text-orange-700 dark:text-orange-300">
-                    Important Notice
-                  </h3>
-                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
-                    Changes to these settings affect the entire website
-                    immediately. Maintenance mode will prevent all visitors from
-                    accessing the site, so use it carefully during updates or
-                    maintenance.
-                  </p>
                 </div>
               </div>
             </CardContent>

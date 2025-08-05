@@ -45,6 +45,7 @@ export async function GET() {
           recruiter: {
             id: recruiter.id,
             assignee: recruiter.assignee,
+            exec: recruiter.exec,
             team_mgmt: recruiter.team_mgmt,
           },
         },

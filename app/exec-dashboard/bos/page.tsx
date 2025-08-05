@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
   CardContent,
@@ -72,18 +72,11 @@ interface BOSMember {
   updated: string;
 }
 
-interface Recruiter {
-  id: string;
-  assignee: string;
-  exec?: boolean;
-}
-
 export default function BOSManagement() {
   const router = useRouter();
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [recruiter, setRecruiter] = useState<Recruiter | null>(null);
   const [hasExecPermissions, setHasExecPermissions] = useState(false);
   const [bosMembers, setBosMembers] = useState<BOSMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,7 +113,6 @@ export default function BOSManagement() {
 
       if (data.authenticated) {
         setIsAuthenticated(true);
-        setRecruiter(data.recruiter);
         setHasExecPermissions(data.recruiter?.exec === true);
       } else {
         setIsAuthenticated(false);
@@ -368,9 +360,7 @@ export default function BOSManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader recruiterName={recruiter?.assignee} />
-
+    <DashboardLayout>
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -762,6 +752,6 @@ export default function BOSManagement() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </DashboardLayout>
   );
 }

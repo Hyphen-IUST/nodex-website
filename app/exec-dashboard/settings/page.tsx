@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
   CardContent,
@@ -57,6 +57,7 @@ export default function SettingsPage() {
       if (data.authenticated) {
         setIsAuthenticated(true);
         setRecruiter(data.recruiter);
+        console.log(recruiter?.assignee);
       } else {
         setIsAuthenticated(false);
         router.push("/exec-dashboard/login");
@@ -171,10 +172,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader recruiterName={recruiter?.assignee} />
-
-      <main className="max-w-4xl mx-auto px-6 py-8">
+    <DashboardLayout>
+      <div className="p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight mb-2">
             Site Settings
@@ -362,7 +361,7 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

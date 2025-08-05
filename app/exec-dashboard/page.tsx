@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
   CardContent,
@@ -279,9 +279,7 @@ export default function ExecDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader recruiterName={recruiter?.assignee} />
-
+    <DashboardLayout>
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
@@ -496,6 +494,6 @@ export default function ExecDashboard() {
           </CardContent>
         </Card>
       </main>
-    </div>
+    </DashboardLayout>
   );
 }

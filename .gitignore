@@ -7,6 +7,7 @@
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
+commit_changes.sh
 !.yarn/releases
 !.yarn/versions
 
@@ -39,3 +40,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.vscode

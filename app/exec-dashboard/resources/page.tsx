@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
   CardContent,
@@ -77,11 +77,6 @@ interface Resource {
   updated: string;
 }
 
-interface Recruiter {
-  id: string;
-  assignee: string;
-}
-
 interface ResourceCategory {
   id: string;
   name: string;
@@ -110,7 +105,6 @@ export default function ResourcesManagement() {
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [recruiter, setRecruiter] = useState<Recruiter | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
   const [categories, setCategories] = useState<ResourceCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,7 +150,6 @@ export default function ResourcesManagement() {
 
       if (data.authenticated) {
         setIsAuthenticated(true);
-        setRecruiter(data.recruiter);
       } else {
         setIsAuthenticated(false);
         router.push("/exec-dashboard/login");
@@ -488,9 +481,7 @@ export default function ResourcesManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader recruiterName={recruiter?.assignee} />
-
+    <DashboardLayout>
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -997,6 +988,6 @@ export default function ResourcesManagement() {
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardLayout>
   );
 }

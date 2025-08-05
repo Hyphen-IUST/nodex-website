@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
   CardContent,
@@ -544,9 +544,7 @@ export default function RecruitmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <DashboardHeader recruiterName={recruiter?.assignee} />
-
+    <DashboardLayout>
       <div className="pt-8 pb-20 px-6">
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
@@ -835,6 +833,6 @@ export default function RecruitmentPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </DashboardLayout>
   );
 }

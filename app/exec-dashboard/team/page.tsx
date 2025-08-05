@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
   CardContent,
@@ -131,6 +131,7 @@ export default function TeamManagement() {
       if (data.authenticated) {
         setIsAuthenticated(true);
         setRecruiter(data.recruiter);
+        console.log(recruiter?.assignee);
         setHasExecPermissions(data.recruiter?.exec === true);
       } else {
         setIsAuthenticated(false);
@@ -148,7 +149,11 @@ export default function TeamManagement() {
       const response = await fetch("/api/dashboard/team");
       if (response.ok) {
         const data = await response.json();
-        setTeamMembers(data.members || []);
+        // Filter out BOS members (category === "bos")
+        const filteredMembers = (data.members || []).filter(
+          (member: TeamMember) => member.category !== "direc"
+        );
+        setTeamMembers(filteredMembers);
       }
     } catch (error) {
       console.error("Failed to fetch team members:", error);
@@ -351,17 +356,15 @@ export default function TeamManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader recruiterName={recruiter?.assignee} />
-
-      <main className="max-w-7xl mx-auto px-6 py-8">
+    <DashboardLayout>
+      <div className="p-6">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">
-              Team Management
+              Club Team Management
             </h1>
             <p className="text-muted-foreground">
-              Manage NodeX team members and their information
+              Manage NodeX club team members (excluding Board of Students)
             </p>
           </div>
           <Button onClick={handleCreateMember}>
@@ -509,269 +512,270 @@ export default function TeamManagement() {
             )}
           </CardContent>
         </Card>
-      </main>
 
-      {/* Create/Edit Member Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
-              {editingMember ? "Edit Team Member" : "Add New Team Member"}
-            </DialogTitle>
-            <DialogDescription>
-              {editingMember
-                ? "Update member details"
-                : "Fill in the member information"}
-            </DialogDescription>
-          </DialogHeader>
+        {/* Create/Edit Member Dialog */}
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>
+                {editingMember ? "Edit Team Member" : "Add New Team Member"}
+              </DialogTitle>
+              <DialogDescription>
+                {editingMember
+                  ? "Update member details"
+                  : "Fill in the member information"}
+              </DialogDescription>
+            </DialogHeader>
 
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              <div>
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Enter full name"
-                  required
-                />
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                <div>
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    placeholder="Enter full name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="title">Title/Position</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    placeholder="Enter position/title"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Select
+                    value={formData.category}
+                    onValueChange={(value: "founding" | "core" | "direc") =>
+                      setFormData({ ...formData, category: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="founding">Founding</SelectItem>
+                      <SelectItem value="core">Core</SelectItem>
+                      <SelectItem value="direc">Board of Directors</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="profile">Profile</Label>
+                  <Textarea
+                    id="profile"
+                    value={formData.profile}
+                    onChange={(e) =>
+                      setFormData({ ...formData, profile: e.target.value })
+                    }
+                    placeholder="Brief profile about the member"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="email">Email (Optional)</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    placeholder="email@example.com"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="phone">Phone (Optional)</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
+                    placeholder="+1234567890"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="skills">Skills (Optional)</Label>
+                  <Input
+                    id="skills"
+                    value={formData.skills}
+                    onChange={(e) =>
+                      setFormData({ ...formData, skills: e.target.value })
+                    }
+                    placeholder="JavaScript, React, Node.js..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="photo">Profile Image URL (Optional)</Label>
+                  <Input
+                    id="photo"
+                    type="url"
+                    value={formData.photo}
+                    onChange={(e) =>
+                      setFormData({ ...formData, photo: e.target.value })
+                    }
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="linkedin">LinkedIn URL (Optional)</Label>
+                  <Input
+                    id="linkedin"
+                    type="url"
+                    value={formData.linkedin}
+                    onChange={(e) =>
+                      setFormData({ ...formData, linkedin: e.target.value })
+                    }
+                    placeholder="https://linkedin.com/in/username"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="github">GitHub URL (Optional)</Label>
+                  <Input
+                    id="github"
+                    type="url"
+                    value={formData.github}
+                    onChange={(e) =>
+                      setFormData({ ...formData, github: e.target.value })
+                    }
+                    placeholder="https://github.com/username"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="pos">Position Order</Label>
+                  <Input
+                    id="pos"
+                    type="number"
+                    min="1"
+                    value={formData.pos}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        pos: parseInt(e.target.value) || 1,
+                      })
+                    }
+                    placeholder="1"
+                    required
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="title">Title/Position</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder="Enter position/title"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="category">Category</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value: "founding" | "core" | "direc") =>
-                    setFormData({ ...formData, category: value })
-                  }
+              <DialogFooter className="mt-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setDialogOpen(false)}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="founding">Founding</SelectItem>
-                    <SelectItem value="core">Core</SelectItem>
-                    <SelectItem value="direc">Board of Directors</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {editingMember ? "Updating..." : "Adding..."}
+                    </>
+                  ) : editingMember ? (
+                    "Update Member"
+                  ) : (
+                    "Add Member"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
 
-              <div>
-                <Label htmlFor="profile">Profile</Label>
-                <Textarea
-                  id="profile"
-                  value={formData.profile}
-                  onChange={(e) =>
-                    setFormData({ ...formData, profile: e.target.value })
-                  }
-                  placeholder="Brief profile about the member"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email (Optional)</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  placeholder="email@example.com"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="phone">Phone (Optional)</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
-                  }
-                  placeholder="+1234567890"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="skills">Skills (Optional)</Label>
-                <Input
-                  id="skills"
-                  value={formData.skills}
-                  onChange={(e) =>
-                    setFormData({ ...formData, skills: e.target.value })
-                  }
-                  placeholder="JavaScript, React, Node.js..."
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="photo">Profile Image URL (Optional)</Label>
-                <Input
-                  id="photo"
-                  type="url"
-                  value={formData.photo}
-                  onChange={(e) =>
-                    setFormData({ ...formData, photo: e.target.value })
-                  }
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="linkedin">LinkedIn URL (Optional)</Label>
-                <Input
-                  id="linkedin"
-                  type="url"
-                  value={formData.linkedin}
-                  onChange={(e) =>
-                    setFormData({ ...formData, linkedin: e.target.value })
-                  }
-                  placeholder="https://linkedin.com/in/username"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="github">GitHub URL (Optional)</Label>
-                <Input
-                  id="github"
-                  type="url"
-                  value={formData.github}
-                  onChange={(e) =>
-                    setFormData({ ...formData, github: e.target.value })
-                  }
-                  placeholder="https://github.com/username"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="pos">Position Order</Label>
-                <Input
-                  id="pos"
-                  type="number"
-                  min="1"
-                  value={formData.pos}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      pos: parseInt(e.target.value) || 1,
-                    })
-                  }
-                  placeholder="1"
-                  required
-                />
-              </div>
-            </div>
-
-            <DialogFooter className="mt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={submitting}>
+        {/* Action Confirmation Dialog */}
+        <AlertDialog
+          open={confirmDialog.open}
+          onOpenChange={(open) =>
+            setConfirmDialog({ open, action: null, member: null })
+          }
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {confirmDialog.action === "create"
+                  ? "Add Team Member"
+                  : "Update Team Member"}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to{" "}
+                {confirmDialog.action === "create" ? "add" : "update"} this team
+                member?
+                {confirmDialog.action === "update" &&
+                  " This will modify the existing member data."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmSubmit} disabled={submitting}>
                 {submitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {editingMember ? "Updating..." : "Adding..."}
+                    {confirmDialog.action === "create"
+                      ? "Adding..."
+                      : "Updating..."}
                   </>
-                ) : editingMember ? (
-                  "Update Member"
-                ) : (
+                ) : confirmDialog.action === "create" ? (
                   "Add Member"
+                ) : (
+                  "Update Member"
                 )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
-      {/* Action Confirmation Dialog */}
-      <AlertDialog
-        open={confirmDialog.open}
-        onOpenChange={(open) =>
-          setConfirmDialog({ open, action: null, member: null })
-        }
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {confirmDialog.action === "create"
-                ? "Add Team Member"
-                : "Update Team Member"}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to{" "}
-              {confirmDialog.action === "create" ? "add" : "update"} this team
-              member?
-              {confirmDialog.action === "update" &&
-                " This will modify the existing member data."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmSubmit} disabled={submitting}>
-              {submitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {confirmDialog.action === "create"
-                    ? "Adding..."
-                    : "Updating..."}
-                </>
-              ) : confirmDialog.action === "create" ? (
-                "Add Member"
-              ) : (
-                "Update Member"
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={deleteDialog.open}
-        onOpenChange={(open) => setDeleteDialog({ open, member: null })}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Remove Team Member</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to remove &ldquo;{deleteDialog.member?.name}
-              &rdquo; from the team? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteMember}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Remove Member
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog
+          open={deleteDialog.open}
+          onOpenChange={(open) => setDeleteDialog({ open, member: null })}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remove Team Member</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to remove &ldquo;
+                {deleteDialog.member?.name}
+                &rdquo; from the team? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteMember}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Remove Member
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </DashboardLayout>
   );
 }

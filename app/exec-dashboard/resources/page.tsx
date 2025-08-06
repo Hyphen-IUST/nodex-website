@@ -104,6 +104,14 @@ export default function ResourcesManagement() {
   const router = useRouter();
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
+
+  const truncateText = (text: string, maxLength: number = 80) => {
+    if (!text || text.length <= maxLength) return text;
+    const truncated = text.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(" ");
+    const cutoff = lastSpace > maxLength * 0.8 ? lastSpace : maxLength;
+    return text.substring(0, cutoff).trim() + "...";
+  };
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
   const [categories, setCategories] = useState<ResourceCategory[]>([]);
@@ -540,11 +548,11 @@ export default function ResourcesManagement() {
                 <TableBody>
                   {resources.map((resource) => (
                     <TableRow key={resource.id}>
-                      <TableCell>
+                      <TableCell className="max-w-xs">
                         <div>
                           <p className="font-medium">{resource.title}</p>
-                          <p className="text-sm text-muted-foreground line-clamp-1">
-                            {resource.description}
+                          <p className="text-sm text-muted-foreground overflow-hidden">
+                            {truncateText(resource.description, 25)}
                           </p>
                         </div>
                       </TableCell>
@@ -648,8 +656,8 @@ export default function ResourcesManagement() {
                         <p className="font-medium">{category.name}</p>
                       </TableCell>
                       <TableCell>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
-                          {category.description}
+                        <p className="text-sm text-muted-foreground">
+                          {truncateText(category.description, 25)}
                         </p>
                       </TableCell>
                       <TableCell>

@@ -5,10 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { cn } from "@/lib/utils";
 import { Github, ArrowRight } from "lucide-react";
@@ -168,9 +165,9 @@ export function HeroSection() {
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         {org.description}
                       </p>
-                      <Link 
-                        href={org.website} 
-                        target="_blank" 
+                      <Link
+                        href={org.website}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block text-xs text-blue-500 hover:text-blue-400 font-medium underline transition-colors"
                       >

@@ -67,7 +67,7 @@ export async function DELETE(
 
     // Check if category is being used by any resources
     const resourcesResponse = await fetch(
-      `${pocketbaseUrl}/api/collections/resources/records?filter=(category="${id}")&page=1&perPage=1`,
+      `${pocketbaseUrl}/api/collections/nodex_resources/records?filter=(category="${id}")&page=1&perPage=1`,
       {
         method: "GET",
         headers: {

@@ -1,10 +1,52 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ category: string }> }
 ) {
   try {
+    // Check for member authentication
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get("member-session");
+
+    if (!sessionCookie || !sessionCookie.value) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Authentication required",
+        },
+        { status: 401 }
+      );
+    }
+
+    // Validate session
+    const sessionData = JSON.parse(sessionCookie.value);
+    if (!sessionData.authenticated || !sessionData.member) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid authentication",
+        },
+        { status: 401 }
+      );
+    }
+
+    // Check if session is expired (24 hours)
+    const loginTime = new Date(sessionData.loginTime);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
+
+    if (hoursDiff > 24) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Session expired",
+        },
+        { status: 401 }
+      );
+    }
+
     const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
 
     if (!pocketbaseUrl) {

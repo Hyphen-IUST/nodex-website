@@ -122,6 +122,11 @@ export function DashboardSidebar({
           href: "/exec-dashboard/resources",
           icon: Folder,
         },
+        {
+          label: "Resource Requests",
+          href: "/exec-dashboard/resource-requests",
+          icon: FileText,
+        },
       ],
     },
     {

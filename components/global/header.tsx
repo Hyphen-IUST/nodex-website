@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -22,7 +22,6 @@ export function Header() {
     { name: "Home", path: "/" },
     { name: "Team", path: "/team" },
     { name: "Events", path: "/events" },
-    { name: "Resources", path: "/resources" },
     { name: "Collaborate", path: "/collaborate" },
     { name: "Join", path: "/join" },
   ];
@@ -61,8 +60,14 @@ export function Header() {
             ))}
           </div>
 
-          {/* Right - IUST Logo and Theme Toggle (Desktop only) */}
+          {/* Right - Member Login, IUST Logo and Theme Toggle (Desktop only) */}
           <div className="hidden md:flex items-center space-x-4">
+            <Link href="/member-dashboard">
+              <Button variant="outline" size="sm">
+                <LogIn className="mr-2 w-4 h-4" />
+                Member Portal
+              </Button>
+            </Link>
             <div className="w-10 h-10 flex items-center justify-center">
               <Image
                 src="https://i.ibb.co/QFN6zx4T/iust-logo.png"
@@ -119,8 +124,20 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
+              {/* Member Login */}
+              <div className="px-6 py-3 border-t border-border">
+                <Link
+                  href="/member-dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Button variant="outline" size="sm">
+                    <LogIn className="mr-2 w-4 h-4" />
+                    Member Portal
+                  </Button>
+                </Link>
+              </div>
               {/* Theme toggle in mobile menu */}
-              <div className="px-6 py-3 flex items-center justify-between">
+              <div className="px-6 py-3 flex items-center justify-between border-t border-border">
                 <span className="text-sm font-medium text-muted-foreground">
                   Theme
                 </span>

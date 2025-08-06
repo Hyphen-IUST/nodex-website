@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { Header } from "../../../components/global/header";
-import { Footer } from "../../../components/global/footer";
+import { Header } from "../../../../components/global/header";
+import { Footer } from "../../../../components/global/footer";
 import {
   Search,
   Filter,

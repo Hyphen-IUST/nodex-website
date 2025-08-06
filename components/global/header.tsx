@@ -85,7 +85,7 @@ export function Header() {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
             <Link href="https://www.iust.ac.in" target="_blank">
-              <div className="w-10 h-10 flex items-center justify-center cursor-pointer">
+              <div className="w-10 h-10 flex items-center justify-center">
                 <Image
                   src="https://i.ibb.co/QFN6zx4T/iust-logo.png"
                   width={40}

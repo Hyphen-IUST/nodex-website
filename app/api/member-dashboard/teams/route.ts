@@ -107,7 +107,7 @@ export async function GET() {
       });
     }
 
-    // Fetch teams that the member belongs to
+    // Fetch teams that the member belongs to with comprehensive data
     const teams = [];
     for (const teamId of memberTeamIds) {
       try {
@@ -121,7 +121,61 @@ export async function GET() {
 
         if (teamResponse.ok) {
           const team = await teamResponse.json();
-          teams.push(team);
+
+          // Get member count for this team - check both collections
+          let memberCount = 0;
+
+          // First try team_members collection
+          const membersResponse = await fetch(
+            `${pocketbaseUrl}/api/collections/team_members/records?filter=(team="${teamId}")`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+
+          if (membersResponse.ok) {
+            const membersData = await membersResponse.json();
+            memberCount = membersData.items.length;
+          }
+
+          // If no members found in team_members, check club_members collection
+          if (memberCount === 0) {
+            const clubMembersResponse = await fetch(
+              `${pocketbaseUrl}/api/collections/club_members/records?filter=(teams~"${teamId}")`,
+              {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+
+            if (clubMembersResponse.ok) {
+              const clubMembersData = await clubMembersResponse.json();
+              memberCount = clubMembersData.items.length;
+            }
+          }
+
+          // Get task count for this team
+          const tasksResponse = await fetch(
+            `${pocketbaseUrl}/api/collections/team_tasks/records?filter=(team="${teamId}")`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const tasksData = tasksResponse.ok
+            ? await tasksResponse.json()
+            : { items: [] };
+          const completedTasks = tasksData.items.filter(
+            (task: { status: string }) => task.status === "completed"
+          ).length;
+
+          teams.push({
+            ...team,
+            memberCount: memberCount,
+            taskCount: tasksData.items.length,
+            completedTaskCount: completedTasks,
+          });
         }
       } catch (error) {
         console.error(`Failed to fetch team ${teamId}:`, error);

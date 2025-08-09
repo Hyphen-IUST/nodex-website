@@ -93,7 +93,10 @@ export async function GET() {
     const teamsWithCounts = await Promise.all(
       teams.map(async (team: Team) => {
         try {
-          // Get member count
+          // Get member count - check both team_members collection and club_members with teams field
+          let memberCount = 0;
+
+          // First try team_members collection
           const membersResponse = await fetch(
             `${pocketbaseUrl}/api/collections/team_members/records?filter=(team="${team.id}")`,
             {
@@ -104,9 +107,28 @@ export async function GET() {
             }
           );
 
-          const membersData = membersResponse.ok
-            ? await membersResponse.json()
-            : { items: [] };
+          if (membersResponse.ok) {
+            const membersData = await membersResponse.json();
+            memberCount = membersData.items.length;
+          }
+
+          // If no members found in team_members, check club_members collection
+          if (memberCount === 0) {
+            const clubMembersResponse = await fetch(
+              `${pocketbaseUrl}/api/collections/club_members/records?filter=(teams~"${team.id}")`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (clubMembersResponse.ok) {
+              const clubMembersData = await clubMembersResponse.json();
+              memberCount = clubMembersData.items.length;
+            }
+          }
 
           // Get task count
           const tasksResponse = await fetch(
@@ -128,7 +150,7 @@ export async function GET() {
 
           return {
             ...team,
-            memberCount: membersData.items.length,
+            memberCount: memberCount,
             taskCount: tasksData.items.length,
             completedTaskCount: completedTasks,
           };

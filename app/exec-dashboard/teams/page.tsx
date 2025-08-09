@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
@@ -54,6 +55,10 @@ import {
   Eye,
   Loader2,
   BarChart3,
+  Calendar,
+  UserCheck,
+  Link as LinkIcon,
+  Clock,
 } from "lucide-react";
 
 interface Team {
@@ -63,9 +68,11 @@ interface Team {
   category: string;
   team_lead?: string;
   repository_url?: string;
+  jira_link?: string;
   status: string;
   image_url?: string;
   created_by: string;
+  max_members?: number;
   created: string;
   updated: string;
   memberCount: number;
@@ -102,8 +109,10 @@ export default function TeamsManagement() {
     category: "",
     team_lead: "",
     repository_url: "",
+    jira_link: "",
     status: "active",
     image_url: "",
+    max_members: "",
   });
 
   const teamCategories = [
@@ -193,8 +202,10 @@ export default function TeamsManagement() {
       category: "",
       team_lead: "",
       repository_url: "",
+      jira_link: "",
       status: "active",
       image_url: "",
+      max_members: "",
     });
     setDialogOpen(true);
   };
@@ -207,8 +218,10 @@ export default function TeamsManagement() {
       category: team.category,
       team_lead: team.team_lead || "",
       repository_url: team.repository_url || "",
+      jira_link: team.jira_link || "",
       status: team.status,
       image_url: team.image_url || "",
+      max_members: team.max_members?.toString() || "",
     });
     setDialogOpen(true);
   };
@@ -223,12 +236,20 @@ export default function TeamsManagement() {
         : "/api/dashboard/teams";
       const method = editingTeam ? "PUT" : "POST";
 
+      // Prepare data with proper types
+      const submitData = {
+        ...formData,
+        max_members: formData.max_members
+          ? parseInt(formData.max_members)
+          : undefined,
+      };
+
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       if (response.ok) {
@@ -308,6 +329,8 @@ export default function TeamsManagement() {
         return <Badge variant="default">Active</Badge>;
       case "inactive":
         return <Badge variant="secondary">Inactive</Badge>;
+      case "planning":
+        return <Badge variant="outline">Planning</Badge>;
       case "archived":
         return <Badge variant="outline">Archived</Badge>;
       default:
@@ -375,26 +398,67 @@ export default function TeamsManagement() {
             {teams.map((team) => (
               <Card key={team.id} className="hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{team.name}</CardTitle>
-                    {getStatusBadge(team.status)}
+                  <div className="flex items-start gap-3">
+                    {/* Team Image */}
+                    {team.image_url ? (
+                      <div className="w-12 h-12 rounded-lg overflow-hidden border bg-muted flex-shrink-0 relative">
+                        <Image
+                          src={team.image_url}
+                          alt={`${team.name} logo`}
+                          fill
+                          className="object-cover"
+                          onError={() => {
+                            // Handle error by showing fallback
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Users className="w-6 h-6 text-primary" />
+                      </div>
+                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg truncate">
+                          {team.name}
+                        </CardTitle>
+                        {getStatusBadge(team.status)}
+                      </div>
+                      <CardDescription className="line-clamp-2 mt-1">
+                        {team.description}
+                      </CardDescription>
+                    </div>
                   </div>
-                  <CardDescription className="line-clamp-2">
-                    {team.description}
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {/* Category */}
-                    <div className="flex items-center gap-2">
+                    {/* Category and Team Lead */}
+                    <div className="flex items-center justify-between">
                       <Badge variant="outline">{team.category}</Badge>
+                      {team.team_lead && (
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <UserCheck className="w-3 h-3" />
+                          <span className="truncate max-w-20">
+                            {team.team_lead}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 gap-3 text-sm">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-muted-foreground" />
-                        <span>{team.memberCount} members</span>
+                        <span>
+                          {team.memberCount}
+                          {team.max_members && (
+                            <span className="text-muted-foreground">
+                              /{team.max_members}
+                            </span>
+                          )}{" "}
+                          members
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle className="w-4 h-4 text-muted-foreground" />
@@ -429,19 +493,58 @@ export default function TeamsManagement() {
                       </div>
                     )}
 
-                    {/* Repository Link */}
-                    {team.repository_url && (
-                      <a
-                        href={team.repository_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                      >
-                        <GitBranch className="w-4 h-4" />
-                        <span>Repository</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
+                    {/* Team Info */}
+                    <div className="space-y-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-3 h-3" />
+                        <span>
+                          Created {new Date(team.created).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {team.created_by && (
+                        <div className="flex items-center gap-2">
+                          <UserCheck className="w-3 h-3" />
+                          <span>by {team.created_by}</span>
+                        </div>
+                      )}
+                      {team.updated && team.updated !== team.created && (
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-3 h-3" />
+                          <span>
+                            Updated{" "}
+                            {new Date(team.updated).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* External Links */}
+                    <div className="flex flex-col gap-2">
+                      {team.repository_url && (
+                        <a
+                          href={team.repository_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          <GitBranch className="w-4 h-4" />
+                          <span>Repository</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                      {team.jira_link && (
+                        <a
+                          href={team.jira_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-orange-600 hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300"
+                        >
+                          <LinkIcon className="w-4 h-4" />
+                          <span>JIRA Project</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 pt-2">
@@ -557,6 +660,58 @@ export default function TeamsManagement() {
               </div>
 
               <div>
+                <Label htmlFor="jira_link">JIRA Project Link (Optional)</Label>
+                <Input
+                  id="jira_link"
+                  type="url"
+                  value={formData.jira_link}
+                  onChange={(e) =>
+                    setFormData({ ...formData, jira_link: e.target.value })
+                  }
+                  placeholder="https://your-org.atlassian.net/projects/..."
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="team_lead">Team Lead (Optional)</Label>
+                <Input
+                  id="team_lead"
+                  value={formData.team_lead}
+                  onChange={(e) =>
+                    setFormData({ ...formData, team_lead: e.target.value })
+                  }
+                  placeholder="Team lead name"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="max_members">Maximum Members (Optional)</Label>
+                <Input
+                  id="max_members"
+                  type="number"
+                  min="1"
+                  value={formData.max_members}
+                  onChange={(e) =>
+                    setFormData({ ...formData, max_members: e.target.value })
+                  }
+                  placeholder="e.g. 10"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="image_url">Team Image URL (Optional)</Label>
+                <Input
+                  id="image_url"
+                  type="url"
+                  value={formData.image_url}
+                  onChange={(e) =>
+                    setFormData({ ...formData, image_url: e.target.value })
+                  }
+                  placeholder="https://example.com/team-logo.png"
+                />
+              </div>
+
+              <div>
                 <Label htmlFor="status">Status</Label>
                 <Select
                   value={formData.status}
@@ -570,7 +725,7 @@ export default function TeamsManagement() {
                   <SelectContent>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
+                    <SelectItem value="planning">Planning</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

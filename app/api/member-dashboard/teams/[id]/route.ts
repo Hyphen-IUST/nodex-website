@@ -208,6 +208,30 @@ export async function GET(
       `Viewed details for team: ${team.name}`
     );
 
+    // Count tasks for this team
+    let taskCount = 0;
+    let completedTasks = 0;
+
+    try {
+      const tasksResponse = await fetch(
+        `${pocketbaseUrl}/api/collections/tasks/records?filter=(team_id='${id}')`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (tasksResponse.ok) {
+        const tasksData = await tasksResponse.json();
+        taskCount = tasksData.items.length;
+        completedTasks = tasksData.items.filter(
+          (task: { status: string }) => task.status === "completed"
+        ).length;
+      }
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+
     return NextResponse.json({
       success: true,
       team: {
@@ -215,6 +239,19 @@ export async function GET(
         name: team.name,
         description: team.description,
         category: team.category,
+        status: team.status,
+        team_lead: team.team_lead,
+        max_members: team.max_members,
+        current_members: formattedMembers.length,
+        github_link: team.github_link,
+        jira_link: team.jira_link,
+        image_url: team.image_url,
+        is_recruiting: team.is_recruiting,
+        is_active: team.is_active,
+        task_count: taskCount,
+        completed_tasks: completedTasks,
+        progress:
+          taskCount > 0 ? Math.round((completedTasks / taskCount) * 100) : 0,
         created: team.created,
         updated: team.updated,
       },

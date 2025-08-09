@@ -39,6 +39,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
+import { useActivityLogger } from "@/hooks/useExecActivityLogger";
 import { PageLoading } from "@/components/ui/page-loading";
 import {
   Clock,
@@ -82,6 +83,7 @@ interface ResourceRequest {
 export default function ResourceRequestsPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { logActivity } = useActivityLogger();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [requests, setRequests] = useState<ResourceRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -173,6 +175,20 @@ export default function ResourceRequestsPage() {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
+          // Log the activity
+          await logActivity({
+            action: "Update Resource Request",
+            resource_type: "resource_request",
+            resource_id: selectedRequest.id,
+            details: `Updated request "${selectedRequest.title}" - Status: ${
+              formData.status
+            }${
+              formData.admin_notes
+                ? `, Admin Notes: ${formData.admin_notes}`
+                : ""
+            }`,
+          });
+
           toast({
             title: "Success",
             description: "Resource request updated successfully",

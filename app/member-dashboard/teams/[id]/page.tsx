@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Image from "next/image";
 import { MemberDashboardLayout } from "@/components/member-dashboard/member-dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { PageLoading } from "@/components/ui/page-loading";
 import {
-  Users,
   ArrowLeft,
   Mail,
   Linkedin,
@@ -23,6 +24,18 @@ interface Team {
   name: string;
   description: string;
   category: string;
+  status: string;
+  team_lead: string;
+  max_members: number;
+  current_members: number;
+  github_link?: string;
+  jira_link?: string;
+  image_url?: string;
+  is_recruiting: boolean;
+  is_active: boolean;
+  task_count: number;
+  completed_tasks: number;
+  progress: number;
   created: string;
   updated: string;
 }
@@ -45,6 +58,19 @@ interface TeamMember {
 interface TeamData {
   team: Team;
   members: TeamMember[];
+}
+
+function getStatusBadgeVariant(status: string) {
+  switch (status) {
+    case "active":
+      return "default";
+    case "inactive":
+      return "secondary";
+    case "planning":
+      return "outline";
+    default:
+      return "secondary";
+  }
 }
 
 export default function MemberTeamDetailsPage() {
@@ -155,21 +181,117 @@ export default function MemberTeamDetailsPage() {
               Back to Teams
             </Button>
           </div>
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight mb-2">
-                {team.name}
-              </h1>
-              <div className="flex items-center gap-2 mb-4">
-                <Badge variant="secondary">{team.category}</Badge>
-                <Badge variant="outline">
-                  <Users className="w-3 h-3 mr-1" />
-                  {members.length} members
-                </Badge>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Team Info */}
+            <div className="lg:col-span-2">
+              <div className="flex items-start gap-4 mb-4">
+                {team.image_url && (
+                  <div className="flex-shrink-0">
+                    <Image
+                      src={team.image_url}
+                      alt={`${team.name} logo`}
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 rounded-lg object-cover border"
+                    />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <h1 className="text-3xl font-bold tracking-tight mb-2">
+                    {team.name}
+                  </h1>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <Badge variant="secondary">{team.category}</Badge>
+                    <Badge variant={getStatusBadgeVariant(team.status)}>
+                      {team.status}
+                    </Badge>
+                    {team.is_recruiting && (
+                      <Badge variant="default" className="bg-green-600">
+                        Recruiting
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-muted-foreground">
+                    {team.description || "No description available"}
+                  </p>
+                </div>
               </div>
-              <p className="text-muted-foreground max-w-2xl">
-                {team.description || "No description available"}
-              </p>
+
+              {/* Team Links */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {team.github_link && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(team.github_link, "_blank")}
+                  >
+                    <Github className="w-4 h-4 mr-2" />
+                    GitHub
+                  </Button>
+                )}
+                {team.jira_link && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(team.jira_link, "_blank")}
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    JIRA
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Team Stats */}
+            <div className="space-y-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Team Overview</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Team Members</span>
+                      <span className="font-medium">
+                        {team.current_members}/{team.max_members}
+                      </span>
+                    </div>
+                    <Progress
+                      value={(team.current_members / team.max_members) * 100}
+                      className="h-2"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Task Progress</span>
+                      <span className="font-medium">{team.progress}%</span>
+                    </div>
+                    <Progress value={team.progress} className="h-2" />
+                    <p className="text-xs text-muted-foreground">
+                      {team.completed_tasks} of {team.task_count} tasks
+                      completed
+                    </p>
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Team Lead</span>
+                      <span className="font-medium">{team.team_lead}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Status</span>
+                      <Badge
+                        variant={getStatusBadgeVariant(team.status)}
+                        className="text-xs"
+                      >
+                        {team.status}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

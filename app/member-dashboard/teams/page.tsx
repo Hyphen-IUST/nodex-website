@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { MemberDashboardLayout } from "@/components/member-dashboard/member-dashboard-layout";
 import {
   Card,
@@ -13,15 +14,35 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageLoading } from "@/components/ui/page-loading";
-import { Users, ChevronRight, ArrowLeft } from "lucide-react";
+import {
+  Users,
+  ChevronRight,
+  ArrowLeft,
+  GitBranch,
+  ExternalLink,
+  Link as LinkIcon,
+  Calendar,
+  UserCheck,
+  CheckCircle,
+} from "lucide-react";
 
 interface Team {
   id: string;
   name: string;
   description: string;
   category: string;
+  team_lead?: string;
+  repository_url?: string;
+  jira_link?: string;
+  status: string;
+  image_url?: string;
+  created_by: string;
+  max_members?: number;
   created: string;
   updated: string;
+  memberCount?: number;
+  taskCount?: number;
+  completedTaskCount?: number;
 }
 
 export default function MemberTeamsPage() {
@@ -74,6 +95,24 @@ export default function MemberTeamsPage() {
       fetchTeams();
     }
   }, [isAuthenticated]);
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "active":
+        return <Badge variant="default">Active</Badge>;
+      case "inactive":
+        return <Badge variant="secondary">Inactive</Badge>;
+      case "planning":
+        return <Badge variant="outline">Planning</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
+  const getProgressPercentage = (completed: number, total: number) => {
+    if (total === 0) return 0;
+    return Math.round((completed / total) * 100);
+  };
 
   if (loading || isAuthenticated === null) {
     return <PageLoading />;
@@ -130,22 +169,159 @@ export default function MemberTeamsPage() {
                   router.push(`/member-dashboard/teams/${team.id}`)
                 }
               >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2 flex-1">
-                      <CardTitle className="text-lg">{team.name}</CardTitle>
-                      <Badge variant="secondary" className="text-xs">
-                        {team.category}
-                      </Badge>
+                <CardHeader className="pb-3">
+                  <div className="flex items-start gap-3">
+                    {/* Team Image */}
+                    {team.image_url ? (
+                      <div className="w-12 h-12 rounded-lg overflow-hidden border bg-muted flex-shrink-0 relative">
+                        <Image
+                          src={team.image_url}
+                          alt={`${team.name} logo`}
+                          fill
+                          className="object-cover"
+                          onError={() => {
+                            // Handle error by showing fallback
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Users className="w-6 h-6 text-primary" />
+                      </div>
+                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg truncate">
+                          {team.name}
+                        </CardTitle>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-xs">
+                          {team.category}
+                        </Badge>
+                        {team.status && getStatusBadge(team.status)}
+                      </div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="line-clamp-3">
+                  <CardDescription className="line-clamp-2 mb-4">
                     {team.description || "No description available"}
                   </CardDescription>
-                  <div className="mt-4 pt-4 border-t">
+
+                  {/* Team Stats */}
+                  {(team.memberCount !== undefined ||
+                    team.taskCount !== undefined) && (
+                    <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                      {team.memberCount !== undefined && (
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-muted-foreground" />
+                          <span>
+                            {team.memberCount}
+                            {team.max_members && (
+                              <span className="text-muted-foreground">
+                                /{team.max_members}
+                              </span>
+                            )}{" "}
+                            members
+                          </span>
+                        </div>
+                      )}
+                      {team.taskCount !== undefined && (
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                          <span>{team.taskCount} tasks</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Progress Bar */}
+                  {team.taskCount !== undefined &&
+                    team.taskCount > 0 &&
+                    team.completedTaskCount !== undefined && (
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center justify-between text-sm">
+                          <span>Progress</span>
+                          <span>
+                            {getProgressPercentage(
+                              team.completedTaskCount,
+                              team.taskCount
+                            )}
+                            %
+                          </span>
+                        </div>
+                        <div className="w-full bg-secondary rounded-full h-2">
+                          <div
+                            className="bg-primary h-2 rounded-full transition-all"
+                            style={{
+                              width: `${getProgressPercentage(
+                                team.completedTaskCount,
+                                team.taskCount
+                              )}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Team Info */}
+                  <div className="space-y-2 text-xs text-muted-foreground mb-4">
+                    {team.team_lead && (
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="w-3 h-3" />
+                        <span>Lead: {team.team_lead}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-3 h-3" />
+                      <span>
+                        Created {new Date(team.created).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {team.created_by && (
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="w-3 h-3" />
+                        <span>by {team.created_by}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* External Links */}
+                  {(team.repository_url || team.jira_link) && (
+                    <div className="flex flex-col gap-2 mb-4">
+                      {team.repository_url && (
+                        <a
+                          href={team.repository_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <GitBranch className="w-4 h-4" />
+                          <span>Repository</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                      {team.jira_link && (
+                        <a
+                          href={team.jira_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-orange-600 hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <LinkIcon className="w-4 h-4" />
+                          <span>JIRA Project</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="pt-4 border-t">
                     <div className="flex items-center text-xs text-muted-foreground">
                       <Users className="w-3 h-3 mr-1" />
                       Team Member

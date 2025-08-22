@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { headers } from 'next/headers';
 
 const loginSchema = z.object({
   authKey: z.string().min(1, "Auth key is required"),
 });
 
 // Activity logging function
-async function logActivity(recruiterId: string, details: string) {
+async function logActivity(ip_address: string, recruiterId: string, details: string) {
   try {
     const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
 
@@ -19,6 +20,7 @@ async function logActivity(recruiterId: string, details: string) {
         recruiter: recruiterId,
         action: "Login",
         resource_type: "authentication",
+        ip_address: ip_address, 
         resource_id: recruiterId,
         details: details,
         timestamp: new Date().toISOString(),
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { authKey } = loginSchema.parse(body);
-
+    const headersList = headers();
     // Check if auth key exists in PocketBase recruiters collection
     const pocketbaseUrl = process.env.POCKETBASE_BACKEND_URL;
     const response = await fetch(
@@ -90,6 +92,7 @@ export async function POST(request: NextRequest) {
 
       // Log successful login activity
       await logActivity(
+        headersList.get("x-forwarded-for"),
         recruiter.id,
         `Recruiter "${recruiter.assignee}" logged into executive dashboard`
       );

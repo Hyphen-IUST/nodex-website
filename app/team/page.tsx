@@ -8,7 +8,6 @@ import { RichTextRenderer } from "@/components/ui/rich-text-renderer";
 import { PageLoading } from "@/components/ui/page-loading";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
 import { Github, Linkedin, Mail, Award, Users, Phone } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -118,8 +117,8 @@ export default function TeamPage() {
     };
 
     return (
-      <Card className="border-border hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-        <CardHeader className="text-center pb-3 p-4">
+      <div className="saas-card hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+        <div className="text-center pb-3 p-4">
           <div className="relative w-20 h-20 mx-auto mb-4">
             <div className="w-20 h-20 bg-muted rounded-xl flex items-center justify-center text-foreground text-lg font-bold overflow-hidden border border-border shadow-sm">
               {member.photo ? (
@@ -138,17 +137,17 @@ export default function TeamPage() {
               )}
             </div>
           </div>
-          <CardTitle className="text-lg font-bold mb-2 leading-tight">
+          <h3 className="text-lg font-bold mb-2 leading-tight text-green-100">
             {member.name}
-          </CardTitle>
+          </h3>
           <div className="flex justify-center mb-3">
             <Badge variant="default" className="px-3 py-1 text-sm font-medium">
               {member.title}
             </Badge>
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent className="pt-0 p-4 flex-1 flex flex-col">
+        <div className="pt-0 p-4 flex-1 flex flex-col">
           {/* Expandable content sections */}
           <div className="space-y-4 mb-4">
             {member.qualification && (
@@ -344,8 +343,8 @@ export default function TeamPage() {
               )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   };
 
@@ -370,14 +369,23 @@ export default function TeamPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen">
       <Header />
 
-      <div className="pt-24 pb-20 px-6">
-        <div className="max-w-6xl mx-auto">
+      <div className="pt-24 pb-20 px-6 relative">
+        {/* Background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="floating-element absolute top-10 right-10 w-16 h-16 rounded-full bg-gradient-to-r from-emerald-400/5 to-emerald-600/10 blur-xl"></div>
+          <div className="floating-element absolute bottom-10 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-green-400/5 to-green-600/10 blur-xl"></div>
+          <div className="floating-element absolute top-1/2 left-1/4 w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500/5 to-green-500/10 blur-xl"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           {/* Page Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Team</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              <span className="gradient-text">Our Team</span>
+            </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Meet the passionate individuals who drive NodeX forward. Our
               diverse team of students work together to create an amazing tech
@@ -407,7 +415,9 @@ export default function TeamPage() {
               {/* Core Committee Tab with Sub-tabs */}
               <TabsContent value="core" className="mt-0">
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-4">Core Committee</h2>
+                  <h2 className="text-3xl font-bold mb-4 text-green-100">
+                    Core Committee
+                  </h2>
                 </div>
 
                 <Tabs
@@ -434,7 +444,9 @@ export default function TeamPage() {
 
                   <TabsContent value="founding" className="mt-0">
                     <div className="text-center mb-8">
-                      <h3 className="text-2xl font-bold mb-4">Founding Team</h3>
+                      <h3 className="text-2xl font-bold mb-4 text-green-100">
+                        Founding Team
+                      </h3>
                       <p className="text-muted-foreground max-w-2xl mx-auto">
                         Leadership team responsible for strategic direction and
                         overall management of NodeX
@@ -463,7 +475,9 @@ export default function TeamPage() {
 
                   <TabsContent value="core" className="mt-0">
                     <div className="text-center mb-8">
-                      <h3 className="text-2xl font-bold mb-4">Core Members</h3>
+                      <h3 className="text-2xl font-bold mb-4 text-green-100">
+                        Core Members
+                      </h3>
                       <p className="text-muted-foreground max-w-2xl mx-auto">
                         Operations team responsible for day-to-day activities
                         and project execution
@@ -495,7 +509,9 @@ export default function TeamPage() {
               {/* Board of Students Tab */}
               <TabsContent value="direc" className="mt-0">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl font-bold mb-4">Board of Students</h2>
+                  <h2 className="text-3xl font-bold mb-4 text-green-100">
+                    Board of Students
+                  </h2>
                   <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                     Student representatives providing mentorship and fostering
                     community engagement

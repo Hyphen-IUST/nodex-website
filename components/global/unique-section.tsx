@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function UniqueSection() {
   return (
@@ -48,28 +47,30 @@ export function UniqueSection() {
             </div>
           </div>
           <div>
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="text-xl">Our Philosophy</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="p-6 bg-muted rounded-lg">
-                  <p className="text-lg font-medium mb-2">
-                    &quot;Code. Research. Rise.&quot;
-                  </p>
+            <div className="saas-card">
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-green-100 mb-6">
+                  Our Philosophy
+                </h3>
+                <div className="space-y-6">
+                  <div className="p-6 bg-muted rounded-lg">
+                    <p className="text-lg font-medium mb-2">
+                      &quot;Code. Research. Rise.&quot;
+                    </p>
+                  </div>
+                  <div className="p-6 bg-muted rounded-lg">
+                    <p className="text-lg font-medium mb-2">
+                      &quot;From Terminal to Thesis&quot;
+                    </p>
+                  </div>
+                  <div className="p-6 bg-muted rounded-lg">
+                    <p className="text-lg font-medium mb-2">
+                      &quot;A Node in Every Network&quot;
+                    </p>
+                  </div>
                 </div>
-                <div className="p-6 bg-muted rounded-lg">
-                  <p className="text-lg font-medium mb-2">
-                    &quot;From Terminal to Thesis&quot;
-                  </p>
-                </div>
-                <div className="p-6 bg-muted rounded-lg">
-                  <p className="text-lg font-medium mb-2">
-                    &quot;A Node in Every Network&quot;
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>

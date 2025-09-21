@@ -25,13 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
@@ -181,15 +174,17 @@ export function JoinForm() {
   }
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl">Join NodeX</CardTitle>
-        <CardDescription>
+    <div className="max-w-4xl mx-auto saas-card p-8">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold mb-4">
+          <span className="gradient-text">Join NodeX</span>
+        </h2>
+        <p className="text-muted-foreground text-lg">
           Fill out this form to apply for membership in our tech community. We
           welcome students from all backgrounds and skill levels.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </p>
+      </div>
+      <div>
         {submitStatus.type && (
           <div
             className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
@@ -527,7 +522,7 @@ export function JoinForm() {
             </Button>
           </form>
         </Form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

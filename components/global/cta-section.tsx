@@ -3,39 +3,42 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar } from "lucide-react";
 
 export function CTASection() {
   return (
-    <section className="py-20 px-6">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl md:text-5xl font-bold mb-6">
-          Ready to Begin Your Journey?
-        </h2>
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Join a community of passionate developers and ambitious scholars. Your
-          future in tech and academia starts here.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/join">
+    <section className="py-20 px-6 relative">
+      {/* Background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="floating-element absolute top-10 left-1/4 w-24 h-24 rounded-full bg-gradient-to-r from-emerald-400/10 to-emerald-600/20 blur-xl"></div>
+        <div className="floating-element absolute bottom-10 right-1/4 w-20 h-20 rounded-full bg-gradient-to-r from-green-400/10 to-green-600/20 blur-xl"></div>
+      </div>
+
+      <div className="max-w-5xl mx-auto text-center relative z-10">
+        <div className="hero-glassmorphism p-12 rounded-3xl">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <span className="gradient-text">Ready to Begin Your Journey?</span>
+          </h2>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Join a community of passionate developers and ambitious scholars.
+            Your future in tech and academia starts here.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="bg-foreground text-background hover:bg-foreground/90 px-8 py-4 text-lg w-full sm:w-auto"
+              asChild
+              className="saas-button-primary text-lg px-8 py-4"
             >
-              Join NodeX Today
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <Link href="/join">Join NodeX Today</Link>
             </Button>
-          </Link>
-          <Link href="/events">
             <Button
-              size="lg"
               variant="outline"
-              className="border-border text-muted-foreground hover:bg-muted px-8 py-4 text-lg w-full sm:w-auto"
+              size="lg"
+              asChild
+              className="saas-button-secondary text-lg px-8 py-4"
             >
-              <Calendar className="mr-2 w-5 h-5" />
-              View Events
+              <Link href="/events">View Events</Link>
             </Button>
-          </Link>
+          </div>
         </div>
       </div>
     </section>

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface GalleryItem {
@@ -115,9 +114,9 @@ export function GallerySection() {
         {/* Gallery Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredItems.map((item) => (
-            <Card
+            <div
               key={item.id}
-              className="border-border hover:shadow-lg transition-shadow overflow-hidden"
+              className="saas-card hover:shadow-lg transition-shadow overflow-hidden"
             >
               <div className="aspect-video bg-muted overflow-hidden">
                 <Image
@@ -128,15 +127,15 @@ export function GallerySection() {
                   className="w-full h-full object-cover hover:scale-105 transition-transform"
                 />
               </div>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">{item.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
+              <div className="pb-3 p-6">
+                <h3 className="text-lg font-bold text-green-100">
+                  {item.title}
+                </h3>
+                <p className="text-muted-foreground text-sm mt-3">
                   {item.description}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
 

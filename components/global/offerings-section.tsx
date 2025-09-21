@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Wrench, Zap, Rocket, Mic, Users, Globe } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Wrench, Zap, Rocket } from "lucide-react";
 
 export function OfferingsSection() {
   const offerings = [
@@ -10,7 +9,7 @@ export function OfferingsSection() {
       icon: <Wrench className="w-8 h-8 text-primary" />,
       title: "Workshops",
       description:
-        "Practical sessions on Web Dev, Git, AI/ML, DSA, Linux, and more to build hands-on technical skills.",
+        "Practical sessions covering diverse engineering disciplines - from software and electronics to mechanical design, automation, and emerging technologies.",
     },
     {
       icon: <Zap className="w-8 h-8 text-primary" />,
@@ -24,32 +23,20 @@ export function OfferingsSection() {
       description:
         "Students can form teams to build and showcase innovative tech solutions.",
     },
-    {
-      icon: <Mic className="w-8 h-8 text-primary" />,
-      title: "Speaker Sessions",
-      description:
-        "Talks and Q&As with industry professionals, alumni, and technologists.",
-    },
-    {
-      icon: <Users className="w-8 h-8 text-primary" />,
-      title: "Peer Mentoring",
-      description:
-        "Juniors get guidance from seniors on career planning, programming, and open-source.",
-    },
-    {
-      icon: <Globe className="w-8 h-8 text-primary" />,
-      title: "Collaborations",
-      description:
-        "Cross-club events, university outreach, and networking partnerships.",
-    },
   ];
 
   return (
-    <section id="offerings" className="py-20 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section id="offerings" className="py-20 px-6 relative">
+      {/* Background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="floating-element absolute top-10 right-10 w-16 h-16 rounded-full bg-gradient-to-r from-emerald-400/5 to-emerald-600/10 blur-xl"></div>
+        <div className="floating-element absolute bottom-10 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-green-400/5 to-green-600/10 blur-xl"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            What NodeX Offers
+            <span className="gradient-text">What NodeX Offers</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             A broad spectrum of activities and opportunities, designed to
@@ -59,18 +46,15 @@ export function OfferingsSection() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {offerings.map((offering, index) => (
-            <Card
-              key={index}
-              className="border-border hover:shadow-lg transition-shadow"
-            >
-              <CardHeader className="pb-3">
-                <div className="mb-4">{offering.icon}</div>
-                <CardTitle className="text-xl">{offering.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{offering.description}</p>
-              </CardContent>
-            </Card>
+            <div key={index} className="saas-card p-8 group">
+              <div className="mb-6 group-hover:scale-110 transition-transform duration-300">
+                {offering.icon}
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-foreground">
+                {offering.title}
+              </h3>
+              <p className="text-muted-foreground">{offering.description}</p>
+            </div>
           ))}
         </div>
       </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Info, Target, Heart, BookOpen, Users, Shield } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Target, Heart, Shield } from "lucide-react";
 
 export function AboutSection() {
   const coreValues = [
@@ -19,18 +18,6 @@ export function AboutSection() {
         "All voices matter. Everyone, regardless of experience level, is welcome and supported.",
     },
     {
-      icon: <Users className="w-6 h-6" />,
-      title: "Collaboration",
-      description:
-        "Growth comes from working together. We build projects and share success as a team.",
-    },
-    {
-      icon: <BookOpen className="w-6 h-6" />,
-      title: "Lifelong Learning",
-      description:
-        "Embrace curiosity. Be open to learning, unlearning, and relearning.",
-    },
-    {
       icon: <Shield className="w-6 h-6" />,
       title: "Responsible Innovation",
       description:
@@ -39,112 +26,98 @@ export function AboutSection() {
   ];
 
   return (
-    <section id="about" className="py-20 px-6 bg-muted/50">
-      <div className="max-w-6xl mx-auto">
+    <section id="about" className="py-20 px-6 relative">
+      {/* Background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="floating-element absolute top-10 right-10 w-16 h-16 rounded-full bg-gradient-to-r from-emerald-400/5 to-emerald-600/10 blur-xl"></div>
+        <div className="floating-element absolute bottom-10 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-green-400/5 to-green-600/10 blur-xl"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="flex items-center justify-center mb-6">
-            <Info className="w-8 h-8 mr-3 text-primary" />
-            <h2 className="text-4xl md:text-5xl font-bold">What is NodeX?</h2>
-          </div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <span className="gradient-text">What is NodeX?</span>
+          </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             More than a club, it&apos;s a movement driven by students, bridging
-            the gap between academic theory and real-world application
+            the gap between academic theory and real-world application.
           </p>
         </div>
 
-        {/* Main Content */}
-        <div className="mb-20">
-          <div className="grid lg:grid-cols-3 gap-8 mb-12">
-            {/* Main Description */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="prose prose-lg max-w-none">
-                <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  NodeX is a vibrant, student-led technical club initiated in
-                  the year 2025 at the Department of Computer Science and
-                  Engineering, Islamic University of Science and Technology
-                  (IUST), Kashmir.
-                </p>
-
-                <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  At its heart, NodeX is more than a club, it&apos;s a movement
-                  driven by students, aiming to bridge the gap between academic
-                  theory and real-world application through a culture of
-                  innovation, collaboration, and shared growth.
-                </p>
-
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  NodeX was born out of the need for a platform where students
-                  could take initiative, solve meaningful problems, and build
-                  projects that have both technical depth and societal
-                  relevance. It empowers students to become leaders, builders,
-                  and thinkers equipped not just with coding skills, but with a
-                  mindset that embraces complexity, thrives on teamwork, and
-                  values ethical development.
-                </p>
+        {/* Features Grid */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-16">
+          {coreValues.map((value, index) => (
+            <div key={index} className="saas-card p-8 text-center group">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
+                {value.icon}
               </div>
+              <h3 className="text-xl font-semibold mb-4 text-foreground">
+                {value.title}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                {value.description}
+              </p>
             </div>
-
-            {/* Identity Card */}
-            <div className="lg:col-span-1">
-              <div className="bg-card p-6 rounded-lg border border-border shadow-sm h-fit">
-                <h3 className="text-xl font-semibold mb-4 text-foreground">
-                  The NodeX Identity
-                </h3>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  The club&apos;s name itself, &quot;NodeX,&quot; symbolizes its
-                  identity as a central &quot;node&quot; in the student network,
-                  where connections spark ideas, challenges drive action, and
-                  transformation becomes inevitable.
-                </p>
-                <div className="p-4 bg-primary/10 rounded-lg border-l-4 border-primary">
-                  <p className="text-sm font-medium text-primary mb-1">
-                    Founded
-                  </p>
-                  <p className="text-lg font-bold text-foreground">2025</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* Core Values */}
-        <div>
-          <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">
-              Core Values of NodeX
-            </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              The principles that guide our community and drive our mission
-              forward
-            </p>
+        {/* Additional content section with floating icon */}
+        <div className="text-center hero-glassmorphism p-12 rounded-3xl relative">
+          <div className="absolute top-8 left-8 w-12 h-12 rounded-xl bg-gradient-to-r from-emerald-400/20 to-green-500/20 flex items-center justify-center">
+            <div className="w-6 h-6 bg-emerald-400 rounded-full"></div>
           </div>
+          <h3 className="text-3xl md:text-4xl font-bold mb-6">
+            <span className="gradient-text">The NodeX Identity</span>
+          </h3>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-12">
+            NodeX is a vibrant, student-led technical club initiated in 2025 at
+            IUST Kashmir. The club&apos;s name symbolizes its identity as a
+            central &quot;node&quot; in the student network, where connections
+            spark ideas, challenges drive action, and transformation becomes
+            inevitable.
+          </p>
 
-          <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
-            {coreValues.map((value, index) => (
-              <Card
-                key={index}
-                className="border-border hover:shadow-lg transition-all duration-300 group w-full max-w-sm sm:max-w-[320px] flex-shrink-0"
-              >
-                <CardHeader className="pb-4">
-                  <div className="flex items-start space-x-4">
-                    <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300 flex-shrink-0">
-                      {value.icon}
-                    </div>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg mb-3 group-hover:text-primary transition-colors duration-300">
-                        {value.title}
-                      </CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-muted-foreground leading-relaxed">
-                    {value.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Vision and Mission Cards */}
+          <div className="grid lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Vision */}
+            <div className="saas-card p-8 text-center">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-emerald-500/20 to-green-500/20 flex items-center justify-center mx-auto mb-6">
+                <Target className="w-8 h-8 text-primary" />
+              </div>
+              <h4 className="text-xl font-semibold mb-4 text-green-100">
+                Vision Statement
+              </h4>
+              <p className="text-muted-foreground leading-relaxed">
+                Fostering an environment for critical-thinking and
+                problem-solving to strengthen society and inspire the future
+                generations.
+              </p>
+            </div>
+
+            {/* Mission */}
+            <div className="saas-card p-8 text-center">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-emerald-500/20 to-green-500/20 flex items-center justify-center mx-auto mb-6">
+                <Heart className="w-8 h-8 text-primary" />
+              </div>
+              <h4 className="text-xl font-semibold mb-4 text-green-100">
+                Mission Statement
+              </h4>
+              <div className="text-left space-y-3">
+                <p className="text-muted-foreground text-sm">
+                  Building technical expertise through hackathons, competitions,
+                  and collaborative projects that develop industry-ready skills.
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  Fostering leadership development and self-motivation,
+                  empowering individuals to drive innovation.
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  Championing responsible innovation with ethical awareness for
+                  community benefit.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

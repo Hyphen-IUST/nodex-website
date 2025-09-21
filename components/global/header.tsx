@@ -1,16 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, LogIn } from "lucide-react";
-import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 export function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const isActive = (path: string) => {
     if (path === "/" && pathname === "/") return true;
@@ -27,20 +36,27 @@ export function Header() {
   ];
 
   return (
-    <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
-      <div className="max-w-6xl mx-auto px-6">
+    <nav
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-black/80 backdrop-blur-xl border-b border-green-500/20"
+          : "header-glassmorphism"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           {/* Left side - NodeX logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 dark:invert rounded-sm flex items-center justify-center">
+            <div className="w-8 h-8 rounded-sm flex items-center justify-center">
               <Image
-                src={"https://i.ibb.co/RpRrXLM8/node-Xblack.png"}
+                src={"https://i.ibb.co/Rkysb24k/logo-Updated.png"}
                 width={32}
                 height={32}
                 alt="NodeX Logo"
+                className="object-contain"
               />
             </div>
-            <span className="text-xl font-bold">NodeX</span>
+            <span className="text-xl font-bold gradient-text">NodeX</span>
           </Link>
 
           {/* Center - Navigation */}
@@ -49,10 +65,8 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.path}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive(item.path)
-                    ? "text-foreground border-b-2 border-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  isActive(item.path) ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 {item.name}
@@ -60,92 +74,70 @@ export function Header() {
             ))}
           </div>
 
-          {/* Right - Member Login, IUST Logo and Theme Toggle (Desktop only) */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link href="/member-dashboard">
-              <Button variant="outline" size="sm">
-                <LogIn className="mr-2 w-4 h-4" />
-                Member Portal
+          {/* Right side - Actions */}
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="saas-button-secondary"
+              >
+                <Link href="/member-dashboard/login">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Member Login
+                </Link>
               </Button>
-            </Link>
-            <Link href="https://www.iust.ac.in" target="_blank">
-              <div className="w-10 h-10 flex items-center justify-center">
-                <Image
-                  src="https://i.ibb.co/QFN6zx4T/iust-logo.png"
-                  width={40}
-                  height={40}
-                  alt="IUST Logo"
-                  className="object-contain"
-                />
-              </div>
-            </Link>
-            <ThemeToggle />
-          </div>
+            </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-2">
-            <Link href="https://www.iust.ac.in" target="_blank">
-              <div className="w-10 h-10 flex items-center justify-center">
-                <Image
-                  src="https://i.ibb.co/QFN6zx4T/iust-logo.png"
-                  width={40}
-                  height={40}
-                  alt="IUST Logo"
-                  className="object-contain"
-                />
-              </div>
-            </Link>
-            <Button
-              variant="ghost"
-              size="sm"
+            {/* Mobile menu button */}
+            <button
+              className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2"
+              aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
                 <X className="w-5 h-5" />
               ) : (
                 <Menu className="w-5 h-5" />
               )}
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-sm">
-            <div className="py-4 space-y-2">
+          <div className="md:hidden py-4 border-t border-border saas-card mt-2">
+            <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-6 py-3 text-sm font-medium transition-colors ${
+                  className={`text-sm font-medium transition-colors hover:text-primary px-4 py-2 ${
                     isActive(item.path)
-                      ? "text-foreground bg-muted"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      ? "text-primary bg-primary/10 rounded-lg"
+                      : "text-muted-foreground"
                   }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
-              {/* Member Login */}
-              <div className="px-6 py-3 border-t border-border">
-                <Link
-                  href="/member-dashboard"
-                  onClick={() => setIsMobileMenuOpen(false)}
+              <div className="flex flex-col space-y-2 px-4 pt-4 border-t border-border">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="saas-button-secondary justify-start"
                 >
-                  <Button variant="outline" size="sm">
-                    <LogIn className="mr-2 w-4 h-4" />
-                    Member Portal
-                  </Button>
-                </Link>
-              </div>
-              {/* Theme toggle in mobile menu */}
-              <div className="px-6 py-3 flex items-center justify-between border-t border-border">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Theme
-                </span>
-                <ThemeToggle />
+                  <Link href="/exec-dashboard/login">
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Login
+                  </Link>
+                </Button>
+                <Button size="sm" asChild className="saas-button-primary">
+                  <Link href="/join">Get Started</Link>
+                </Button>
               </div>
             </div>
           </div>

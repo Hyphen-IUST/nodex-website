@@ -3,12 +3,10 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { cn } from "@/lib/utils";
-import { Github, ArrowRight } from "lucide-react";
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -79,100 +77,92 @@ export function HeroSection() {
   ];
 
   return (
-    <section className="pt-32 pb-20 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section className="pt-32 pb-20 px-6 relative overflow-hidden">
+      {/* Background floating elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="floating-element absolute top-20 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-emerald-400/10 to-emerald-600/20 blur-xl"></div>
+        <div className="floating-element absolute top-40 right-20 w-32 h-32 rounded-full bg-gradient-to-r from-green-400/10 to-green-600/20 blur-xl"></div>
+        <div className="floating-element absolute bottom-20 left-1/4 w-24 h-24 rounded-full bg-gradient-to-r from-emerald-500/10 to-green-500/20 blur-xl"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         <div
           className={`transition-all duration-1000 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
-          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 tracking-tight text-foreground">
-            NodeX
-          </h1>
-          <Badge className="mb-8 bg-muted text-foreground border-border hover:bg-muted/80">
-            Think. Solve. Transform.
-          </Badge>
-          <p className="text-lg sm:text-xl md:text-2xl mb-8 text-muted-foreground max-w-4xl leading-relaxed">
-            A student-led technical club at IUST Kashmir, bridging the gap
-            between academic theory and real-world application through
-            innovation, collaboration, and shared growth.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 mb-16">
-            <Link href="/join">
-              <Button
-                size="lg"
-                className="bg-foreground text-background hover:bg-foreground/90 px-8 py-3 w-full sm:w-auto"
-              >
-                Join NodeX Today
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
-            <Link href="https://github.com/nodeX-iust" target="_blank">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-border text-muted-foreground hover:bg-muted px-8 py-3 transition-colors"
-              >
-                <Github className="mr-2 w-4 h-4" />
-                View Our Work
-              </Button>
-            </Link>
-          </div>
-
-          {/* Org Logos Section */}
-          <div className="mb-16">
-            <p className="text-center text-sm text-muted-foreground mb-8 uppercase tracking-wide">
-              Aligned With
+          {/* Main hero content */}
+          <div className="text-center max-w-4xl mx-auto mb-16">
+            <div className="hero-glassmorphism rounded-3xl p-12 mb-8">
+              {/* NodeX Logo and Text Side by Side */}
+              <div className="flex items-center justify-center gap-6 mb-6">
+                <Image
+                  src="https://i.ibb.co/Rkysb24k/logo-Updated.png"
+                  width={100}
+                  height={100}
+                  alt="NodeX Logo"
+                  className="object-contain"
+                />
+                <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight">
+                  <span className="gradient-text">NodeX</span>
+                </h1>
+              </div>
+              <div className="mb-8">
+                <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/30 text-emerald-300 text-sm font-medium">
+                  Think. Solve. Transform.
+                </span>
+              </div>
+              <p className="text-lg sm:text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                A student-led technical club at IUST Kashmir, bridging the gap
+                between academic theory and real-world application through
+                innovation, collaboration, and shared growth.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  size="lg"
+                  asChild
+                  className="saas-button-primary text-lg px-8 py-4"
+                >
+                  <Link href="/join">Join NodeX Today</Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  asChild
+                  className="saas-button-secondary text-lg px-8 py-4"
+                >
+                  <Link href="/collaborate">View Our Work</Link>
+                </Button>
+              </div>
+            </div>
+          </div>{" "}
+          {/* Partner organizations section */}
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-8 font-medium tracking-wide uppercase">
+              ALIGNED WITH LEADING ORGANIZATIONS
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-              {orgLogos.map((org, index) => (
-                <Tooltip key={index}>
+            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+              {orgLogos.map((org) => (
+                <Tooltip key={org.name}>
                   <TooltipTrigger asChild>
-                    <div className="flex items-center justify-center p-4 md:p-6 bg-card border border-border rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
-                      {/* Light mode image */}
-                      <Image
-                        src={org.url}
-                        width={150}
-                        height={50}
-                        alt={org.name}
-                        className="max-h-8 md:max-h-12 max-w-full object-contain transition-all duration-300 dark:hidden"
-                        onError={(e) => {
-                          const img = e.target as HTMLImageElement;
-                          img.style.display = "none";
-                        }}
-                      />
-                      {/* Dark mode image */}
-                      <Image
-                        src={org.darkUrl}
-                        width={150}
-                        height={50}
-                        alt={org.name}
-                        className="max-h-8 md:max-h-12 max-w-full object-contain transition-all duration-300 hidden dark:block dark:invert"
-                        onError={(e) => {
-                          const img = e.target as HTMLImageElement;
-                          img.style.display = "none";
-                        }}
-                      />
+                    <div className="w-40 h-24 p-6 cursor-pointer group bg-gradient-to-br from-white/15 via-emerald-500/10 to-white/15 backdrop-blur-20 border border-emerald-500/25 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:from-white/20 hover:via-emerald-500/15 hover:to-white/20 hover:scale-105 hover:border-emerald-400/35">
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Image
+                          src={org.url}
+                          alt={org.name}
+                          width={140}
+                          height={70}
+                          className="max-w-full max-h-full object-contain opacity-85 hover:opacity-100 transition-opacity duration-300"
+                        />
+                      </div>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent
-                    side="top"
-                    className="max-w-xs bg-popover text-popover-foreground border-border shadow-lg"
-                  >
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-sm">{org.name}</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
+                  <TooltipContent>
+                    <div className="max-w-xs p-2">
+                      <h3 className="font-semibold text-sm mb-1">{org.name}</h3>
+                      <p className="text-xs text-muted-foreground">
                         {org.description}
                       </p>
-                      <Link
-                        href={org.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block text-xs text-blue-500 hover:text-blue-400 font-medium underline transition-colors"
-                      >
-                        {org.website}
-                      </Link>
                     </div>
                   </TooltipContent>
                 </Tooltip>

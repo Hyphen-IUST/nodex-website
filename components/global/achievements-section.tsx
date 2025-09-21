@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Trophy, Award, Star, TrendingUp, Users, Code } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export function AchievementsSection() {
@@ -74,12 +73,12 @@ export function AchievementsSection() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {achievements.map((achievement, index) => (
-            <Card
+            <div
               key={index}
-              className="border-border hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-background via-background to-muted/10 group hover:scale-105 relative overflow-hidden"
+              className="saas-card hover:shadow-2xl transition-all duration-500 group hover:scale-105 relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <CardHeader className="pb-3 relative">
+              <div className="pb-3 relative p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-3 bg-muted/50 rounded-lg group-hover:bg-primary/10 transition-colors duration-300">
                     {achievement.icon}
@@ -88,19 +87,17 @@ export function AchievementsSection() {
                     {achievement.year}
                   </Badge>
                 </div>
-                <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors duration-300">
+                <h3 className="text-xl font-bold group-hover:text-primary transition-colors duration-300 text-green-100">
                   {achievement.title}
-                </CardTitle>
+                </h3>
                 <div className="text-2xl font-bold text-primary mb-2">
                   {achievement.highlight}
                 </div>
-              </CardHeader>
-              <CardContent className="relative">
                 <p className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                   {achievement.description}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
 

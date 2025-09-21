@@ -90,15 +90,23 @@ export default function CollaboratePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen">
       <Header />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="pt-32 pb-20 px-6 relative">
+        {/* Background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="floating-element absolute top-10 right-10 w-16 h-16 rounded-full bg-gradient-to-r from-emerald-400/5 to-emerald-600/10 blur-xl"></div>
+          <div className="floating-element absolute bottom-10 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-green-400/5 to-green-600/10 blur-xl"></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto text-center relative z-10">
           <div className="flex items-center justify-center mb-6">
             <h1 className="text-4xl md:text-6xl font-bold">
-              Collaboration & Workshop Requests
+              <span className="gradient-text">
+                Collaboration & Workshop Requests
+              </span>
             </h1>
           </div>
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto">

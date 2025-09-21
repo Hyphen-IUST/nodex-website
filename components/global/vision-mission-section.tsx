@@ -5,18 +5,24 @@ import { Target, Eye } from "lucide-react";
 
 export function VisionMissionSection() {
   return (
-    <section className="py-20 px-6 bg-muted/50">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-20 px-6 relative">
+      {/* Background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="floating-element absolute top-10 right-10 w-16 h-16 rounded-full bg-gradient-to-r from-emerald-400/5 to-emerald-600/10 blur-xl"></div>
+        <div className="floating-element absolute bottom-10 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-green-400/5 to-green-600/10 blur-xl"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Vision & Mission
+            <span className="gradient-text">Vision & Mission</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Our guiding principles that shape everything we do
           </p>
         </div>
 
-        <div className="space-y-12 max-w-4xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* Vision */}
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
@@ -25,7 +31,7 @@ export function VisionMissionSection() {
                 Vision Statement
               </h3>
             </div>
-            <div className="bg-card p-8 rounded-lg border border-border">
+            <div className="saas-card p-8">
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Fostering an environment for critical-thinking and
                 problem-solving to strengthen society and inspire the future
@@ -42,7 +48,7 @@ export function VisionMissionSection() {
                 Mission Statement
               </h3>
             </div>
-            <div className="bg-card p-8 rounded-lg border border-border">
+            <div className="saas-card p-8">
               <h4 className="text-xl font-semibold mb-4 text-primary">
                 NodeX: Think. Solve. Transform.
               </h4>

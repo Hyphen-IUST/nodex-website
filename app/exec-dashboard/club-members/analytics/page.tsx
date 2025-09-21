@@ -89,7 +89,7 @@ export default function ClubMembersAnalyticsPage() {
 
   useEffect(() => {
     fetchAnalytics();
-  }, []);
+  }, [fetchAnalytics]);
 
   const getMemberTypeColor = (type: string) => {
     switch (type.toLowerCase()) {

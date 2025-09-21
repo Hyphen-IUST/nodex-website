@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Roboto_Mono } from "next/font/google";
 import { ThemeProvider } from "../components/global/theme-provider";
 import { MaintenanceWrapper } from "../components/global/maintenance-wrapper";
 import { ScrollEffects } from "../components/global/scroll-effects";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const robotoMono = Roboto_Mono({
+  variable: "--font-roboto-mono",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["100", "200", "300", "400", "500", "600", "700"],
 });
 
-const poppinsSecondary = Poppins({
-  variable: "--font-poppins-secondary",
+const robotoMonoSecondary = Roboto_Mono({
+  variable: "--font-roboto-mono-secondary",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -49,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <body
-        className={`${poppins.variable} ${poppinsSecondary.variable} antialiased dark`}
+        className={`${robotoMono.variable} ${robotoMonoSecondary.variable} antialiased dark`}
       >
         <ThemeProvider
           attribute="class"

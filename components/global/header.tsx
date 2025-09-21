@@ -39,7 +39,7 @@ export function Header() {
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-black/80 backdrop-blur-xl border-b border-green-500/20"
+          ? "bg-black/85 backdrop-blur-xl border-b border-green-600/20"
           : "header-glassmorphism"
       }`}
     >
@@ -107,7 +107,7 @@ export function Header() {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border saas-card mt-2">
+          <div className="md:hidden py-4 border-t border-border mobile-menu-card mt-2">
             <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <Link
@@ -115,7 +115,7 @@ export function Header() {
                   href={item.path}
                   className={`text-sm font-medium transition-colors hover:text-primary px-4 py-2 ${
                     isActive(item.path)
-                      ? "text-primary bg-primary/10 rounded-lg"
+                      ? "text-primary bg-primary/20 rounded-lg"
                       : "text-muted-foreground"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -132,11 +132,8 @@ export function Header() {
                 >
                   <Link href="/exec-dashboard/login">
                     <LogIn className="w-4 h-4 mr-2" />
-                    Login
+                    Member Login
                   </Link>
-                </Button>
-                <Button size="sm" asChild className="saas-button-primary">
-                  <Link href="/join">Get Started</Link>
                 </Button>
               </div>
             </div>

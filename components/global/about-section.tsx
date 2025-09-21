@@ -62,11 +62,8 @@ export function AboutSection() {
           ))}
         </div>
 
-        {/* Additional content section with floating icon */}
+        {/* Additional content section */}
         <div className="text-center hero-glassmorphism p-12 rounded-3xl relative">
-          <div className="absolute top-8 left-8 w-12 h-12 rounded-xl bg-gradient-to-r from-emerald-400/20 to-green-500/20 flex items-center justify-center">
-            <div className="w-6 h-6 bg-emerald-400 rounded-full"></div>
-          </div>
           <h3 className="text-3xl md:text-4xl font-bold mb-6">
             <span className="gradient-text">The NodeX Identity</span>
           </h3>

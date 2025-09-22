@@ -25,7 +25,7 @@ export function SocialsSection() {
       icon: <Linkedin className="w-8 h-8" />,
       description:
         "Connect with us on LinkedIn for professional networking and career opportunities.",
-      link: "https://linkedin.com/company/nodex-iust",
+      link: "https://linkedin.com/company/nodexiust",
     },
   ];
 

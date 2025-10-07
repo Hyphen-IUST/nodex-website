@@ -184,9 +184,8 @@ export function DashboardSidebar({
         <div key={item.label} className="space-y-1">
           <Button
             variant="ghost"
-            className={`w-full justify-start gap-3 h-10 px-3 ${
-              depth > 0 ? "pl-6" : ""
-            } ${isActive ? "bg-accent text-accent-foreground" : ""}`}
+            className={`w-full justify-start gap-3 h-10 px-3 ${depth > 0 ? "pl-6" : ""
+              } ${isActive ? "bg-accent text-accent-foreground" : ""}`}
             onClick={() => toggleSection(item.label)}
           >
             <item.icon className="h-4 w-4 flex-shrink-0" />
@@ -215,9 +214,8 @@ export function DashboardSidebar({
       <Link key={item.label} href={item.href!} onClick={() => setIsOpen(false)}>
         <Button
           variant="ghost"
-          className={`w-full justify-start gap-3 h-10 px-3 ${
-            depth > 0 ? "pl-6" : ""
-          } ${isActive ? "bg-accent text-accent-foreground" : ""}`}
+          className={`w-full justify-start gap-3 h-10 px-3 ${depth > 0 ? "pl-6" : ""
+            } ${isActive ? "bg-accent text-accent-foreground" : ""}`}
         >
           <item.icon className="h-4 w-4 flex-shrink-0" />
           <span className="flex-1 text-left">{item.label}</span>
@@ -240,7 +238,7 @@ export function DashboardSidebar({
             <GitBranch className="h-5 w-5 text-primary-foreground" />
           </div>
           <div className="flex-1">
-            <h2 className="font-semibold text-lg">NodeX Dashboard</h2>
+            <h2 className="font-semibold text-lg">Hyphen Dashboard</h2>
             {recruiterName && (
               <p className="text-sm text-muted-foreground">{recruiterName}</p>
             )}

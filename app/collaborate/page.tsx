@@ -308,6 +308,11 @@ export default function CollaboratePage() {
                     data-callback="collaborateTurnstileSuccess"
                     data-error-callback="collaborateTurnstileError"
                   />
+                  {turnstileToken && (
+                    <p className="text-sm text-green-600 mt-2">
+                      ✓ Verification completed
+                    </p>
+                  )}
                 </div>
 
                 <div className="text-center">

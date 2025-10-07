@@ -126,11 +126,13 @@ export function JoinForm() {
   // Turnstile callback function
   const handleTurnstileSuccess = (token: string) => {
     setTurnstileToken(token);
+    form.setValue("turnstileToken", token);
     form.clearErrors("turnstileToken");
   };
 
   const handleTurnstileError = () => {
     setTurnstileToken("");
+    form.setValue("turnstileToken", "");
     form.setError("turnstileToken", {
       type: "manual",
       message: "Turnstile verification failed. Please try again.",
@@ -571,38 +573,48 @@ export function JoinForm() {
               />
             </div>
 
-            <div className="mb-4">
-              <FormLabel className="block mb-2">
-                Verification *
-              </FormLabel>
-              <Script
-                src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-                async
-                defer
-                onLoad={() => {
-                  // Make callback functions globally available for Turnstile
-                  window.turnstileSuccess = handleTurnstileSuccess;
-                  window.turnstileError = handleTurnstileError;
-                }}
-              />
-              <div
-                ref={turnstileRef}
-                className="cf-turnstile"
-                data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-                data-callback="turnstileSuccess"
-                data-error-callback="turnstileError"
-              />
-              {form.formState.errors.turnstileToken && (
-                <p className="text-sm text-red-500 mt-1">
-                  {form.formState.errors.turnstileToken.message}
-                </p>
+            <FormField
+              control={form.control}
+              name="turnstileToken"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verification *</FormLabel>
+                  <FormControl>
+                    <div>
+                      <Script
+                        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+                        async
+                        defer
+                        onLoad={() => {
+                          // Make callback functions globally available for Turnstile
+                          window.turnstileSuccess = handleTurnstileSuccess;
+                          window.turnstileError = handleTurnstileError;
+                        }}
+                      />
+                      <div
+                        ref={turnstileRef}
+                        className="cf-turnstile"
+                        data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                        data-callback="turnstileSuccess"
+                        data-error-callback="turnstileError"
+                      />
+                      {/* Hidden input to satisfy React Hook Form */}
+                      <input
+                        type="hidden"
+                        {...field}
+                        value={turnstileToken}
+                      />
+                      {turnstileToken && (
+                        <p className="text-sm text-green-600 mt-2">
+                          ✓ Verification completed
+                        </p>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              {turnstileToken && (
-                <p className="text-sm text-green-600 mt-1">
-                  ✓ Verification completed
-                </p>
-              )}
-            </div>
+            />
 
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? (

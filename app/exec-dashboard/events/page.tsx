@@ -311,7 +311,7 @@ export default function EventsManagement() {
               Event Management
             </h1>
             <p className="text-muted-foreground">
-              Create, edit, and manage NodeX events
+              Create, edit, and manage Hyphen events
             </p>
           </div>
           <Button onClick={handleCreateEvent}>
@@ -328,7 +328,7 @@ export default function EventsManagement() {
               Events ({events.length})
             </CardTitle>
             <CardDescription>
-              Manage all NodeX events from this dashboard
+              Manage all Hyphen events from this dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>

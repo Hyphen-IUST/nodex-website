@@ -387,7 +387,7 @@ export default function TeamPage() {
               <span className="gradient-text">Our Team</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Meet the passionate individuals who drive NodeX forward. Our
+              Meet the passionate individuals who drive Hyphen forward. Our
               diverse team of students work together to create an amazing tech
               community.
             </p>
@@ -449,7 +449,7 @@ export default function TeamPage() {
                       </h3>
                       <p className="text-muted-foreground max-w-2xl mx-auto">
                         Leadership team responsible for strategic direction and
-                        overall management of NodeX
+                        overall management of Hyphen
                       </p>
                     </div>
 

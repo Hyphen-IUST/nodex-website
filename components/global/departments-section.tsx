@@ -61,7 +61,7 @@ export function DepartmentsSection() {
                   Coding & Development Division
                 </CardTitle>
                 <CardDescription className="text-muted-foreground text-lg">
-                  The heartbeat of NodeX, fueling students&apos; passion for
+                  The heartbeat of Hyphen, fueling students&apos; passion for
                   building, breaking, and bettering technology
                 </CardDescription>
               </CardHeader>

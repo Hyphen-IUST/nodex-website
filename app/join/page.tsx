@@ -19,7 +19,7 @@ export default function JoinPage() {
           {/* Page Header */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="gradient-text">Join NodeX</span>
+              <span className="gradient-text">Join Hyphen</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Ready to become part of our thriving tech community? Fill out the

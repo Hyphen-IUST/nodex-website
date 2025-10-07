@@ -90,7 +90,7 @@ export default function MaintenancePage() {
         </h1>
 
         <p className="text-xl md:text-2xl text-muted-foreground mb-12 leading-relaxed">
-          NodeX is currently undergoing scheduled maintenance. We&apos;ll be
+          Hyphen is currently undergoing scheduled maintenance. We&apos;ll be
           back online shortly.
         </p>
 
@@ -163,7 +163,7 @@ export default function MaintenancePage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild className="flex items-center gap-2">
-                <a href="mailto:nodex@iust.cc">
+                <a href="mailto:Hyphen@iust.cc">
                   <Mail className="w-4 h-4" />
                   Email Support
                 </a>
@@ -175,7 +175,7 @@ export default function MaintenancePage() {
                 className="flex items-center gap-2"
               >
                 <a
-                  href="https://github.com/nodeX-iust"
+                  href="https://github.com/Hyphen-iust"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

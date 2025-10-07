@@ -187,7 +187,7 @@ export default function ExecutiveLoginPage() {
               <CardContent className="pt-6">
                 <h3 className="font-semibold mb-2">Need Access?</h3>
                 <p className="text-sm text-muted-foreground">
-                  Contact the NodeX executive team to obtain your recruiter
+                  Contact the Hyphen executive team to obtain your recruiter
                   authentication key. Only authorized personnel are granted
                   access to the application management system.
                 </p>

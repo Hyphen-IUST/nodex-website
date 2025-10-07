@@ -26,7 +26,7 @@ export default function CollaboratePage() {
 
   const requestTypes = [
     "Collaboration on an event",
-    "Workshop by NodeX",
+    "Workshop by Hyphen",
     "Technical talk or session",
     "Joint project",
     "Other",
@@ -111,7 +111,7 @@ export default function CollaboratePage() {
           </div>
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
             Are you a club, department, faculty member, or organization looking
-            to collaborate with NodeX or have us host a workshop, seminar, or
+            to collaborate with Hyphen or have us host a workshop, seminar, or
             technical session?
           </p>
         </div>

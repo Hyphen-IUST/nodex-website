@@ -36,7 +36,7 @@ export function OfferingsSection() {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className="gradient-text">What NodeX Offers</span>
+            <span className="gradient-text">What Hyphen Offers</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             A broad spectrum of activities and opportunities, designed to

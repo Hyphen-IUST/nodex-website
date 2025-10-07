@@ -104,7 +104,7 @@ export function HeroSection() {
                   className="object-contain"
                 />
                 <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight">
-                  <span className="gradient-text">NodeX</span>
+                  <span className="gradient-text">Hyphen</span>
                 </h1>
               </div>
               <div className="mb-8">
@@ -113,7 +113,7 @@ export function HeroSection() {
                 </span>
               </div>
               <p className="text-lg sm:text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                A student-led technical club at IUST Kashmir, bridging the gap
+                A student-led body at IUST Kashmir, bridging the gap
                 between academic theory and real-world application through
                 innovation, collaboration, and shared growth.
               </p>
@@ -123,7 +123,7 @@ export function HeroSection() {
                   asChild
                   className="saas-button-primary text-lg px-8 py-4"
                 >
-                  <Link href="/join">Join NodeX Today</Link>
+                  <Link href="/join">Join Hyphen Today</Link>
                 </Button>
                 <Button
                   variant="outline"

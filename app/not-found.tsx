@@ -98,7 +98,7 @@ export default function NotFound() {
                 </div>
                 <h3 className="font-semibold mb-2">Home Page</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Return to our main page and explore what NodeX has to offer
+                  Return to our main page and explore what Hyphen has to offer
                 </p>
                 <Button asChild variant="outline" size="sm" className="w-full">
                   <Link href="/">Visit Home</Link>
@@ -131,7 +131,7 @@ export default function NotFound() {
                   Become a member of our tech community
                 </p>
                 <Button asChild variant="outline" size="sm" className="w-full">
-                  <Link href="/join">Join NodeX</Link>
+                  <Link href="/join">Join Hyphen</Link>
                 </Button>
               </CardContent>
             </Card>

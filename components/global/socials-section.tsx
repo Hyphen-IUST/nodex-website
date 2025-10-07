@@ -11,21 +11,21 @@ export function SocialsSection() {
       icon: <MessageCircle className="w-8 h-8" />,
       description:
         "Join our Discord server for real-time discussions, project collaborations, and community support.",
-      link: "https://nodex.iust.cc/discord",
+      link: "https://hyphen.iust.cc/discord",
     },
     {
       name: "Instagram",
       icon: <Instagram className="w-8 h-8" />,
       description:
         "Follow us on Instagram for updates, behind-the-scenes content, and event highlights.",
-      link: "https://instagram.com/nodex.iust",
+      link: "https://instagram.com/hyphen.iust",
     },
     {
       name: "LinkedIn",
       icon: <Linkedin className="w-8 h-8" />,
       description:
         "Connect with us on LinkedIn for professional networking and career opportunities.",
-      link: "https://linkedin.com/company/nodexiust",
+      link: "https://linkedin.com/company/hypheniust",
     },
   ];
 

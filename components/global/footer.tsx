@@ -16,17 +16,17 @@ export function Footer() {
                 src={"https://i.ibb.co/Rkysb24k/logo-Updated.png"}
                 width={40}
                 height={40}
-                alt="NodeX Logo"
+                alt="Hyphen Logo"
                 className="object-contain"
               />
             </div>
-            <span className="text-2xl font-bold gradient-text">NodeX</span>
+            <span className="text-2xl font-bold gradient-text">Hyphen</span>
           </div>
           <p className="text-muted-foreground mb-4">
             Empowering students to build, learn, and grow together
           </p>
           <p className="text-muted-foreground/60 text-sm">
-            Built by the NodeX community • Open Source • Student-Led
+            Built by the Hyphen community • Open Source • Student-Led
           </p>
         </div>
       </div>

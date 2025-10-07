@@ -45,7 +45,7 @@ export function Header() {
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
-          {/* Left side - NodeX logo */}
+          {/* Left side - `No`deX logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-sm flex items-center justify-center">
               <Image
@@ -56,7 +56,7 @@ export function Header() {
                 className="object-contain"
               />
             </div>
-            <span className="text-xl font-bold gradient-text">NodeX</span>
+            <span className="text-xl font-bold gradient-text">Hyphen</span>
           </Link>
 
           {/* Center - Navigation */}

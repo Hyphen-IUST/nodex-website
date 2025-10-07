@@ -238,7 +238,7 @@ export default function ExecDashboard() {
     },
     {
       title: "Event Management",
-      description: "Create and manage NodeX events",
+      description: "Create and manage Hyphen events",
       href: "/exec-dashboard/events",
       icon: Calendar,
       stats: `${stats.totalEvents} events`,
@@ -287,7 +287,7 @@ export default function ExecDashboard() {
             Welcome back, {recruiter?.assignee}
           </h1>
           <p className="text-muted-foreground">
-            Manage NodeX operations from your dashboard
+            Manage Hyphen operations from your dashboard
           </p>
         </div>
 
@@ -459,7 +459,7 @@ export default function ExecDashboard() {
                   <div className="flex-1">
                     <p className="text-sm font-medium">Dashboard initialized</p>
                     <p className="text-xs text-muted-foreground">
-                      Welcome to the NodeX Executive Dashboard
+                      Welcome to the Hyphen Executive Dashboard
                     </p>
                   </div>
                   <span className="text-xs text-muted-foreground">

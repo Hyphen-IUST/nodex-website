@@ -37,10 +37,10 @@ export function AboutSection() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className="gradient-text">What is NodeX?</span>
+            <span className="gradient-text">What is Hyphen?</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            More than a club, it&apos;s a movement driven by students, bridging
+            It&apos;s a movement driven by students, bridging
             the gap between academic theory and real-world application.
           </p>
         </div>
@@ -65,10 +65,10 @@ export function AboutSection() {
         {/* Additional content section */}
         <div className="text-center hero-glassmorphism p-12 rounded-3xl relative">
           <h3 className="text-3xl md:text-4xl font-bold mb-6">
-            <span className="gradient-text">The NodeX Identity</span>
+            <span className="gradient-text">The Hyphen Identity</span>
           </h3>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-12">
-            NodeX is a vibrant, student-led technical club initiated in 2025 at
+            Hyphen is a vibrant, student-led body initiated in 2025 at
             IUST Kashmir. The club&apos;s name symbolizes its identity as a
             central &quot;node&quot; in the student network, where connections
             spark ideas, challenges drive action, and transformation becomes

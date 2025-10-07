@@ -28,7 +28,7 @@ export function CTASection() {
               asChild
               className="saas-button-primary text-lg px-8 py-4"
             >
-              <Link href="/join">Join NodeX Today</Link>
+              <Link href="/join">Join Hyphen Today</Link>
             </Button>
             <Button
               variant="outline"

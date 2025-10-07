@@ -138,7 +138,7 @@ export default function EventsPage() {
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Join our workshops, hackathons, and study sessions. Build skills,
-              make connections, and grow with the NodeX community.
+              make connections, and grow with the Hyphen community.
             </p>
           </div>
 

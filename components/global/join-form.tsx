@@ -177,7 +177,7 @@ export function JoinForm() {
     <div className="max-w-4xl mx-auto saas-card p-8">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-4">
-          <span className="gradient-text">Join NodeX</span>
+          <span className="gradient-text">Join Hyphen</span>
         </h2>
         <p className="text-muted-foreground text-lg">
           Fill out this form to apply for membership in our tech community. We
@@ -408,7 +408,7 @@ export function JoinForm() {
                 name="whyJoin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Why do you want to join NodeX? *</FormLabel>
+                    <FormLabel>Why do you want to join Hyphen? *</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Tell us about your motivations, goals, and what you hope to achieve by joining our community..."

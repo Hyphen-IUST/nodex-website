@@ -287,7 +287,7 @@ export default function BOSOnboardingPage() {
                 You&apos;ll receive further instructions about dashboard access
                 and strategic planning sessions via email within the next 24
                 hours. Get ready to drive innovation and create opportunities
-                with NodeX!
+                with Hyphen!
               </p>
               <Button onClick={() => setIsSubmitted(false)} variant="outline">
                 Submit Another Form
@@ -317,7 +317,7 @@ export default function BOSOnboardingPage() {
               Board of Students Onboarding
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
-              Congratulations on joining the NodeX Board of Students! Please
+              Congratulations on joining the Hyphen Board of Students! Please
               complete this onboarding form to help us get to know your
               background and set up your access.
             </p>
@@ -800,7 +800,7 @@ export default function BOSOnboardingPage() {
                         defaultChecked={true}
                       />
                       <Label htmlFor="newsletter" className="text-sm">
-                        Subscribe to NodeX newsletter
+                        Subscribe to Hyphen newsletter
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">

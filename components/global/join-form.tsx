@@ -114,11 +114,26 @@ export function JoinForm() {
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
   const { logActivity } = useActivityLogger({
     trackPageViews: true,
     trackFormSubmissions: true,
   });
   const turnstileRef = useRef<HTMLDivElement>(null);
+
+  // Turnstile callback function
+  const handleTurnstileSuccess = (token: string) => {
+    setTurnstileToken(token);
+    form.clearErrors("turnstileToken");
+  };
+
+  const handleTurnstileError = () => {
+    setTurnstileToken("");
+    form.setError("turnstileToken", {
+      type: "manual",
+      message: "Turnstile verification failed. Please try again.",
+    });
+  };
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -145,11 +160,8 @@ export function JoinForm() {
     setSubmitStatus({ type: null, message: "" });
 
     try {
-      // Get Turnstile token
-      const turnstileElement = turnstileRef.current?.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
-      const token = turnstileElement?.value;
-
-      if (!token) {
+      // Check if Turnstile token is available
+      if (!turnstileToken) {
         setSubmitStatus({
           type: "error",
           message: "Please complete the Turnstile verification.",
@@ -161,10 +173,8 @@ export function JoinForm() {
       // Include token in submission
       const submissionData = {
         ...values,
-        turnstileToken: token,
-      };
-
-      const response = await fetch("/api/join", {
+        turnstileToken: turnstileToken,
+      }; const response = await fetch("/api/join", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -183,6 +193,7 @@ export function JoinForm() {
           applicationId: data.applicationId,
         });
         form.reset();
+        setTurnstileToken("");
         // Reset Turnstile widget
         if (window.turnstile) {
           window.turnstile.reset();
@@ -204,6 +215,7 @@ export function JoinForm() {
           error_type: "validation_or_server_error",
           status_code: response.status,
         });
+        setTurnstileToken("");
         // Reset Turnstile widget
         if (window.turnstile) {
           window.turnstile.reset();
@@ -219,6 +231,7 @@ export function JoinForm() {
         error_type: "network_error",
         error: err instanceof Error ? err.message : "unknown_error",
       });
+      setTurnstileToken("");
       // Reset Turnstile widget
       if (window.turnstile) {
         window.turnstile.reset();
@@ -564,15 +577,27 @@ export function JoinForm() {
                 src="https://challenges.cloudflare.com/turnstile/v0/api.js"
                 async
                 defer
+                onLoad={() => {
+                  // Make callback functions globally available for Turnstile
+                  (window as any).turnstileSuccess = handleTurnstileSuccess;
+                  (window as any).turnstileError = handleTurnstileError;
+                }}
               />
               <div
                 ref={turnstileRef}
                 className="cf-turnstile"
                 data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                data-callback="turnstileSuccess"
+                data-error-callback="turnstileError"
               />
               {form.formState.errors.turnstileToken && (
                 <p className="text-sm text-red-500 mt-1">
                   {form.formState.errors.turnstileToken.message}
+                </p>
+              )}
+              {turnstileToken && (
+                <p className="text-sm text-green-600 mt-1">
+                  ✓ Verification completed
                 </p>
               )}
             </div>

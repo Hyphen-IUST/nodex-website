@@ -55,7 +55,17 @@ export default function CollaboratePage() {
     details: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRef = useRef<HTMLDivElement>(null);
+
+  // Turnstile callback functions
+  const handleTurnstileSuccess = (token: string) => {
+    setTurnstileToken(token);
+  };
+
+  const handleTurnstileError = () => {
+    setTurnstileToken("");
+  };
 
   const requestTypes = [
     "Collaboration on an event",
@@ -79,11 +89,8 @@ export default function CollaboratePage() {
     setIsSubmitting(true);
 
     try {
-      // Get Turnstile token
-      const turnstileElement = turnstileRef.current?.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
-      const token = turnstileElement?.value;
-
-      if (!token) {
+      // Check if Turnstile token is available
+      if (!turnstileToken) {
         alert("Please complete the Turnstile verification.");
         setIsSubmitting(false);
         return;
@@ -96,7 +103,7 @@ export default function CollaboratePage() {
         },
         body: JSON.stringify({
           ...formData,
-          turnstileToken: token,
+          turnstileToken: turnstileToken,
         }),
       });
 
@@ -112,6 +119,7 @@ export default function CollaboratePage() {
           requestTypes: [],
           details: "",
         });
+        setTurnstileToken("");
         // Reset Turnstile widget
         if (window.turnstile) {
           window.turnstile.reset();
@@ -285,11 +293,18 @@ export default function CollaboratePage() {
                     src="https://challenges.cloudflare.com/turnstile/v0/api.js"
                     async
                     defer
+                    onLoad={() => {
+                      // Make callback functions globally available for Turnstile
+                      (window as any).collaborateTurnstileSuccess = handleTurnstileSuccess;
+                      (window as any).collaborateTurnstileError = handleTurnstileError;
+                    }}
                   />
                   <div
                     ref={turnstileRef}
                     className="cf-turnstile mt-2"
                     data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                    data-callback="collaborateTurnstileSuccess"
+                    data-error-callback="collaborateTurnstileError"
                   />
                 </div>
 

@@ -19,25 +19,25 @@ const robotoMonoSecondary = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NodeX - Think. Solve. Transform.",
+  title: "Hyphen - Think. Solve. Transform.",
   description:
-    "NodeX is a vibrant, student-led technical club at IUST Kashmir, fostering innovation, collaboration, and shared growth through hackathons, workshops, and collaborative projects.",
+    "Hyphen is a vibrant, student-led body at IUST Kashmir, fostering innovation, collaboration, and shared growth through hackathons, workshops, and collaborative projects.",
   keywords:
-    "NodeX, IUST, tech club, programming, hackathons, workshops, Kashmir, student organization, innovation, collaboration",
-  authors: [{ name: "NodeX Team" }],
+    "Hyphen, IUST, tech club, programming, hackathons, workshops, Kashmir, student organization, innovation, collaboration",
+  authors: [{ name: "Hypen Team" }],
   openGraph: {
-    title: "NodeX - Think. Solve. Transform.",
+    title: "Hyphen - Think. Solve. Transform.",
     description:
-      "Student-led technical club at IUST Kashmir fostering innovation and collaboration",
-    siteName: "NodeX",
+      "Student-led body at IUST Kashmir fostering innovation and collaboration",
+    siteName: "Hyphen",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "NodeX - Think. Solve. Transform.",
+    title: "Hyphen - Think. Solve. Transform.",
     description:
-      "Student-led technical club at IUST Kashmir fostering innovation and collaboration",
+      "Student-led body at IUST Kashmir fostering innovation and collaboration",
   },
 };
 

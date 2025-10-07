@@ -8,6 +8,7 @@ const joinFormSchema = z.object({
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   batch: z.string().min(4, "Please enter your batch year"),
+  discord: z.string().optional(),
   rollNumber: z.string().min(1, "Roll number is required"),
   registrationNumber: z.string().min(1, "Registration number is required"),
   department: z.string().min(1, "Please select a department"),

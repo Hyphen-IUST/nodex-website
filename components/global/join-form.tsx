@@ -69,6 +69,7 @@ const formSchema = z.object({
   rollNumber: z.string().min(1, "Roll number is required"),
   registrationNumber: z.string().min(1, "Registration number is required"),
   department: z.string().min(1, "Please select a department"),
+  discord: z.string().optional(),
   interestedTracks: z
     .array(z.string())
     .min(1, "Please select at least one track"),
@@ -96,7 +97,16 @@ const departments = [
   "Other",
 ];
 
-const tracks = ["Coding & Development", "Postgraduate Prep", "Hardware & IoT"];
+const tracks = [
+  "Coding & Development",
+  "Postgraduate Prep",
+  "Hardware & IoT",
+  "Arts & Crafts",
+  "Social Media & Content Creation",
+  "Graphic Design & Visual Arts",
+  "Event Management & Planning",
+  "General Volunteer Work"
+];
 
 export function JoinForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,6 +134,7 @@ export function JoinForm() {
       whyJoin: "",
       experience: "",
       projects: "",
+      discord: "",
       otherRemarks: "",
       turnstileToken: "",
     },
@@ -314,6 +325,19 @@ export function JoinForm() {
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="discord"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Discord Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., @yourusername" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             {/* Academic Information */}

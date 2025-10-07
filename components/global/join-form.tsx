@@ -2,11 +2,34 @@
 
 import React, { useState, useRef } from "react";
 
+// Turnstile types
+interface TurnstileOptions {
+  sitekey?: string;
+  callback?: (token: string) => void;
+  'error-callback'?: () => void;
+  'expired-callback'?: () => void;
+  'timeout-callback'?: () => void;
+  'after-interactive-callback'?: () => void;
+  'before-interactive-callback'?: () => void;
+  'unsupported-callback'?: () => void;
+  theme?: 'light' | 'dark' | 'auto';
+  language?: string;
+  tabindex?: number;
+  'response-field'?: boolean;
+  'response-field-name'?: string;
+  size?: 'normal' | 'compact';
+  retry?: 'auto' | 'never';
+  'retry-interval'?: number;
+  'refresh-expired'?: 'auto' | 'manual' | 'never';
+  appearance?: 'always' | 'execute' | 'interaction-only';
+  execution?: 'render' | 'execute';
+}
+
 // Extend Window interface for Turnstile
 declare global {
   interface Window {
     turnstile?: {
-      render: (element: string | HTMLElement, options: any) => void;
+      render: (element: string | HTMLElement, options: TurnstileOptions) => void;
       reset: (widgetId?: string) => void;
     };
   }

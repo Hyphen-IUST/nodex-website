@@ -3,8 +3,18 @@
 import React, { useState, useRef } from "react";
 import { Header } from "../../components/global/header";
 import { Footer } from "../../components/global/footer";
-import ReCAPTCHA from "react-google-recaptcha";
+import Script from "next/script";
 import { Mail } from "lucide-react";
+
+// Extend Window interface for Turnstile
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (element: string | HTMLElement, options: any) => void;
+      reset: (widgetId?: string) => void;
+    };
+  }
+}
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +32,7 @@ export default function CollaboratePage() {
     details: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
 
   const requestTypes = [
     "Collaboration on an event",
@@ -46,10 +56,12 @@ export default function CollaboratePage() {
     setIsSubmitting(true);
 
     try {
-      // Get reCAPTCHA token
-      const token = recaptchaRef.current?.getValue();
+      // Get Turnstile token
+      const turnstileElement = turnstileRef.current?.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
+      const token = turnstileElement?.value;
+
       if (!token) {
-        alert("Please complete the reCAPTCHA verification.");
+        alert("Please complete the Turnstile verification.");
         setIsSubmitting(false);
         return;
       }
@@ -61,7 +73,7 @@ export default function CollaboratePage() {
         },
         body: JSON.stringify({
           ...formData,
-          recaptchaToken: token,
+          turnstileToken: token,
         }),
       });
 
@@ -77,7 +89,10 @@ export default function CollaboratePage() {
           requestTypes: [],
           details: "",
         });
-        recaptchaRef.current?.reset();
+        // Reset Turnstile widget
+        if (window.turnstile) {
+          window.turnstile.reset();
+        }
       } else {
         alert("Failed to submit request. Please try again.");
       }
@@ -241,18 +256,17 @@ export default function CollaboratePage() {
 
                 <div>
                   <Label className="text-base font-medium">
-                    reCAPTCHA Verification *
+                    Verification *
                   </Label>
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey={
-                      process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
-                      "6LdKE04qAAAAAMDV8_dBc8TfU2shWh3Z_CyuF5V4"
-                    }
-                    onChange={() => {
-                      // Token validation happens in handleSubmit
-                    }}
-                    className="mt-2"
+                  <Script
+                    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+                    async
+                    defer
+                  />
+                  <div
+                    ref={turnstileRef}
+                    className="cf-turnstile mt-2"
+                    data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
                   />
                 </div>
 

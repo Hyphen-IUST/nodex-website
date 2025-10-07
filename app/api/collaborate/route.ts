@@ -7,7 +7,7 @@ interface CollaborationRequest {
   phone?: string;
   requestTypes: string[];
   details: string;
-  recaptchaToken: string;
+  turnstileToken: string;
 }
 
 export async function POST(request: Request) {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       phone,
       requestTypes,
       details,
-      recaptchaToken,
+      turnstileToken,
     }: CollaborationRequest = body;
 
     // Validate required fields
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       !email ||
       !requestTypes ||
       requestTypes.length === 0 ||
-      !recaptchaToken
+      !turnstileToken
     ) {
       return NextResponse.json(
         { message: "Missing required fields" },
@@ -38,24 +38,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify reCAPTCHA token
-    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
-    const recaptchaResponse = await fetch(
-      "https://www.google.com/recaptcha/api/siteverify",
+    // Verify Turnstile token
+    const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+    const turnstileResponse = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `secret=${recaptchaSecret}&response=${recaptchaToken}`,
+        body: `secret=${turnstileSecret}&response=${turnstileToken}`,
       }
     );
 
-    const recaptchaData = await recaptchaResponse.json();
-    if (!recaptchaData.success) {
+    const turnstileData = await turnstileResponse.json();
+    if (!turnstileData.success) {
       return NextResponse.json(
         {
-          message: "reCAPTCHA verification failed. Please try again.",
+          message: "Turnstile verification failed. Please try again.",
         },
         { status: 400 }
       );

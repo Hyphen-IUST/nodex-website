@@ -1,10 +1,20 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+
+// Extend Window interface for Turnstile
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (element: string | HTMLElement, options: any) => void;
+      reset: (widgetId?: string) => void;
+    };
+  }
+}
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import ReCAPTCHA from "react-google-recaptcha";
+import Script from "next/script";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,7 +58,7 @@ const formSchema = z.object({
   experience: z.string().optional(),
   projects: z.string().optional(),
   otherRemarks: z.string().optional(),
-  recaptchaToken: z.string().min(1, "reCAPTCHA verification is required"),
+  turnstileToken: z.string().min(1, "Turnstile verification is required"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -75,7 +85,7 @@ export function JoinForm() {
     trackPageViews: true,
     trackFormSubmissions: true,
   });
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -92,7 +102,7 @@ export function JoinForm() {
       experience: "",
       projects: "",
       otherRemarks: "",
-      recaptchaToken: "",
+      turnstileToken: "",
     },
   });
 
@@ -101,12 +111,14 @@ export function JoinForm() {
     setSubmitStatus({ type: null, message: "" });
 
     try {
-      // Get reCAPTCHA token
-      const token = recaptchaRef.current?.getValue();
+      // Get Turnstile token
+      const turnstileElement = turnstileRef.current?.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
+      const token = turnstileElement?.value;
+
       if (!token) {
         setSubmitStatus({
           type: "error",
-          message: "Please complete the reCAPTCHA verification.",
+          message: "Please complete the Turnstile verification.",
         });
         setIsSubmitting(false);
         return;
@@ -115,7 +127,7 @@ export function JoinForm() {
       // Include token in submission
       const submissionData = {
         ...values,
-        recaptchaToken: token,
+        turnstileToken: token,
       };
 
       const response = await fetch("/api/join", {
@@ -137,7 +149,10 @@ export function JoinForm() {
           applicationId: data.applicationId,
         });
         form.reset();
-        recaptchaRef.current?.reset();
+        // Reset Turnstile widget
+        if (window.turnstile) {
+          window.turnstile.reset();
+        }
       } else if (response.status === 303 && data.redirect) {
         // Handle redirect response (for blocked IPs)
         await logActivity("join_form_blocked", {
@@ -155,7 +170,10 @@ export function JoinForm() {
           error_type: "validation_or_server_error",
           status_code: response.status,
         });
-        recaptchaRef.current?.reset();
+        // Reset Turnstile widget
+        if (window.turnstile) {
+          window.turnstile.reset();
+        }
       }
     } catch (err) {
       console.error("Form submission error:", err);
@@ -167,7 +185,10 @@ export function JoinForm() {
         error_type: "network_error",
         error: err instanceof Error ? err.message : "unknown_error",
       });
-      recaptchaRef.current?.reset();
+      // Reset Turnstile widget
+      if (window.turnstile) {
+        window.turnstile.reset();
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -187,11 +208,10 @@ export function JoinForm() {
       <div>
         {submitStatus.type && (
           <div
-            className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
-              submitStatus.type === "success"
-                ? "bg-green-50 text-green-800 border border-green-200"
-                : "bg-red-50 text-red-800 border border-red-200"
-            }`}
+            className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${submitStatus.type === "success"
+              ? "bg-green-50 text-green-800 border border-green-200"
+              : "bg-red-50 text-red-800 border border-red-200"
+              }`}
           >
             {submitStatus.type === "success" ? (
               <CheckCircle className="w-5 h-5" />
@@ -373,14 +393,14 @@ export function JoinForm() {
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange([
-                                            ...field.value,
-                                            track,
-                                          ])
+                                          ...field.value,
+                                          track,
+                                        ])
                                         : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== track
-                                            )
-                                          );
+                                          field.value?.filter(
+                                            (value) => value !== track
+                                          )
+                                        );
                                     }}
                                   />
                                 </FormControl>
@@ -491,21 +511,21 @@ export function JoinForm() {
 
             <div className="mb-4">
               <FormLabel className="block mb-2">
-                reCAPTCHA Verification *
+                Verification *
               </FormLabel>
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey={
-                  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
-                  "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-                } // Default is Google's test key
-                onChange={(token) => {
-                  form.setValue("recaptchaToken", token || "");
-                }}
+              <Script
+                src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+                async
+                defer
               />
-              {form.formState.errors.recaptchaToken && (
+              <div
+                ref={turnstileRef}
+                className="cf-turnstile"
+                data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              />
+              {form.formState.errors.turnstileToken && (
                 <p className="text-sm text-red-500 mt-1">
-                  {form.formState.errors.recaptchaToken.message}
+                  {form.formState.errors.turnstileToken.message}
                 </p>
               )}
             </div>

@@ -23,7 +23,7 @@ const joinFormSchema = z.object({
   experience: z.string().optional(),
   projects: z.string().optional(),
   otherRemarks: z.string().optional(),
-  recaptchaToken: z.string().min(1, "reCAPTCHA verification is required"),
+  turnstileToken: z.string().min(1, "Turnstile verification is required"),
 });
 
 export async function POST(request: NextRequest) {
@@ -37,24 +37,24 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-real-ip") ||
       "0.0.0.0";
 
-    // Verify reCAPTCHA token
-    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
-    const recaptchaResponse = await fetch(
-      "https://www.google.com/recaptcha/api/siteverify",
+    // Verify Turnstile token
+    const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+    const turnstileResponse = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `secret=${recaptchaSecret}&response=${validatedData.recaptchaToken}`,
+        body: `secret=${turnstileSecret}&response=${validatedData.turnstileToken}`,
       }
     );
 
-    const recaptchaData = await recaptchaResponse.json();
-    if (!recaptchaData.success) {
+    const turnstileData = await turnstileResponse.json();
+    if (!turnstileData.success) {
       return NextResponse.json(
         {
-          message: "reCAPTCHA verification failed. Please try again.",
+          message: "Turnstile verification failed. Please try again.",
         },
         { status: 400 }
       );

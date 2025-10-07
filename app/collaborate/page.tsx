@@ -36,6 +36,8 @@ declare global {
       render: (element: string | HTMLElement, options: TurnstileOptions) => void;
       reset: (widgetId?: string) => void;
     };
+    collaborateTurnstileSuccess?: (token: string) => void;
+    collaborateTurnstileError?: () => void;
   }
 }
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -295,8 +297,8 @@ export default function CollaboratePage() {
                     defer
                     onLoad={() => {
                       // Make callback functions globally available for Turnstile
-                      (window as any).collaborateTurnstileSuccess = handleTurnstileSuccess;
-                      (window as any).collaborateTurnstileError = handleTurnstileError;
+                      window.collaborateTurnstileSuccess = handleTurnstileSuccess;
+                      window.collaborateTurnstileError = handleTurnstileError;
                     }}
                   />
                   <div

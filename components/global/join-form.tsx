@@ -32,6 +32,8 @@ declare global {
       render: (element: string | HTMLElement, options: TurnstileOptions) => void;
       reset: (widgetId?: string) => void;
     };
+    turnstileSuccess?: (token: string) => void;
+    turnstileError?: () => void;
   }
 }
 import { useForm } from "react-hook-form";
@@ -579,8 +581,8 @@ export function JoinForm() {
                 defer
                 onLoad={() => {
                   // Make callback functions globally available for Turnstile
-                  (window as any).turnstileSuccess = handleTurnstileSuccess;
-                  (window as any).turnstileError = handleTurnstileError;
+                  window.turnstileSuccess = handleTurnstileSuccess;
+                  window.turnstileError = handleTurnstileError;
                 }}
               />
               <div

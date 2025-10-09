@@ -196,14 +196,13 @@ export default function CreateClubMemberPage() {
   ];
 
   const departments = [
-    "Computer Science",
-    "Software Engineering",
-    "Information Technology",
-    "Electrical Engineering",
-    "Data Science",
-    "Artificial Intelligence",
-    "Cybersecurity",
-    "Other",
+    "CSE",
+    "ECE",
+    "Mechanical",
+    "Civil",
+    "Electrical",
+    "B.Sc CS/AI/DS",
+    "Other"
   ];
 
   const currentYear = new Date().getFullYear();

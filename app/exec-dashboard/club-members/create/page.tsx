@@ -83,7 +83,7 @@ export default function CreateClubMemberPage() {
       const response = await fetch("/api/dashboard/teams");
       if (!response.ok) throw new Error("Failed to fetch teams");
       const data = await response.json();
-      setTeams(data);
+      setTeams(data.teams || []);
     } catch (error) {
       console.error("Error fetching teams:", error);
       toast({
